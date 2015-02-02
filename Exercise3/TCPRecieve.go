@@ -18,16 +18,24 @@ func main() {
 	runtime.GOMAXPROCS(runtime.NumCPU()) // I guess this is a hint to what GOMAXPROCS does...
 	// recvSock = 
 	buffer := make([]byte, 1024)
-	udpAddr, err := ResolveUDPAddr("udp", ":30000") // Mulig net. trengs foran Dial
+	tcpAddr, err := ResolveTCPAddr("tcp", ":30000") // Mulig net. trengs foran Dial
 	checkError(err)
-	conn, err := ListenUDP("udp", udpAddr)
+	Println(1)
+	listener, err := ListenTCP("tcp", tcpAddr)
 	checkError(err)
-	
+	Println(2)
+	//conn, err := listener.Accept()
+	//checkError(err)
+	//Println(3)
 	for {
+		conn, err := listener.AcceptTCP()
+		checkError(err)
+		Println(3)
 		time.Sleep(1000*time.Millisecond)
 		//Println("Hei!")
 		n,err := conn.Read(buffer)
 		checkError(err)
+		Println(4)
 		Printf("Rcv %d bytes: %s\n",n, buffer)
 	}
 	
