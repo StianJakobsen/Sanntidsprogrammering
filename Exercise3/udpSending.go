@@ -32,7 +32,7 @@ func main() {
 	runtime.GOMAXPROCS(runtime.NumCPU()) // I guess this is a hint to what GOMAXPROCS does...
 	// recvSock = 
 	//buffer := make([]byte, 1024)
-	udpAddr, err := ResolveUDPAddr("udp4", "129.241.187.136:20001")
+	udpAddr, err := ResolveUDPAddr("udp4", "129.241.187.145:31111")
 	checkError(err)
 	Println("1")
 	conn, err := DialUDP("udp4", nil, udpAddr)

@@ -31,7 +31,7 @@ func checkError(err error) {
 
 func listen() {
 	buffer := make([]byte, 1024)
-	udpAddr, err := ResolveUDPAddr("udp", ":31111")
+	udpAddr, err := ResolveUDPAddr("udp", ":32222")
 	conn, err := ListenUDP("udp", udpAddr)
 	checkError(err)
 	for {
@@ -70,8 +70,12 @@ func main() {
 	ip, _ := reader.ReadBytes('\n')
 	go send(ip)
 	go listen()
+	
+	deadChan := make(chan int)
+	<-deadChan
+	
 
-	for {
+		for {
 		
 		//Print(ip)
 		//Print("Melding:")
