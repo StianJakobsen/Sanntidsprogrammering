@@ -27,23 +27,35 @@ func initElevator() {
 		if i != 0{
 			C.io_clear_bit(downlights[i])
 		} 		
-		if i != N_FLOORS - 1 {
+		if i != N_FLOORS - 1 {
 			C.io_clear_bit(upLights[i])
 		}
 		C.io_clear_bit(cmdLights[i])
 	} 
+	// + noko greier her
 }
 
-func setLight(floor, on/off) {
-
-}
-
-
-func getFloor() {
+func SetLight(floor, on/off) {
 
 }
 
-func floorIndicator() { // one light must always be on
+
+func GetFloor() {
 
 }
+
+func FloorIndicator(floor, on/off) { // one light must always be on
+
+}
+
+func ResetLights() {
+	
+}
+
+func ElevDirection(dir int) {
+	
+}
+
+func ElevDoorLamp
+
 
