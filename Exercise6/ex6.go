@@ -5,83 +5,98 @@ package main
 import (
 	. "fmt" // Using '.' to avoid prefixing functions with their package names
 	// This is probably not a good idea for large projects...
-	"bufio"
-	"encoding/binary"
 	. "net"
-	"os"
 	"runtime"
 	"time"
+	"encoding/json"
 )
+
+
+type TellerStruct struct {
+		teller int
+	}
 
 func main() {
 	runtime.GOMAXPROCS(runtime.NumCPU()) // I guess this is a hint to what GOMAXPROCS does...
 	//buffer := make([]byte, 1024)
-	var current int64 = 0
+	currentStruct := TellerStruct{0}
+
+	
+
 	//current := 0
-	tellerChan := make(chan int64)
+	tellerChan := make(chan int)
 	primaryChan := make(chan int) // kanskje bruke til å passe på at eg er primary
 	backupChan := make(chan int)
 
-	tellerChan <- current
-	backupChan <- 1
 
-	go listenForPrimary(tellerChan, backupChan)
+
+	//tellerChan <- currentStruct.teller
+	//Println(<-tellerChan)
+	//backupChan <- 1
+	//primaryChan <- 1
+	
+	go listenForPrimary(tellerChan, backupChan, primaryChan, &currentStruct)
 
 	for {
+		Println("forloopmain")
 		select {
-		case <-primaryChan:
-			Println(current)
-			current++
-			tellerChan <- current
-			primaryChan <- 1
-			time.Sleep(1 * time.Second)
-
-		case <-backupChan:
-			// Vente x antall sekund
-			// Hvis listen for primary ikkje får melding
-			// --> I AM PRIMARY!
-
+			case <-primaryChan:
+				Println("Start Alive Broadcast")
+				tellerChan <-currentStruct.teller
+				go imAlive(tellerChan)
+			case <-backupChan:
+				Println("hei fra primary state")
+				// Vente x antall sekund
+				// Hvis listen for primary ikkje får melding
+				// --> I AM PRIMARY!
+				currentStruct.teller = <-tellerChan
+				Println(currentStruct.teller)
 		}
-
 	}
-
-	// deadChan := make(chan int) //trurkje eg treng detta nå
-	// <-deadChan
-
 }
 
-//func counter(tellerChan chan int64) {
-//	for i := 0; ; i++ {
-//		Println(i)
-//	}
-//}
 
-func imAlive(tellerChan <-chan int64) { // Bare sende siste tal for simplicity
+func imAlive(tellerChan chan int) { // Bare sende siste tal for simplicity
 	udpAddr, err := ResolveUDPAddr("udp", "129.241.187.255:30169") // Broadcast (rektig ip?)
 	checkError(err)
 	conn, err := DialUDP("udp", nil, udpAddr)
 	checkError(err)
+	currentStruct := TellerStruct{0}
+	Println("imalive?")
+	currentStruct.teller = <-tellerChan
 	for {
-		//time.Sleep(1*time.Second)
-		conn.Write([]byte(<-tellerChan))
-		//conn.Write([]byte("I am alive\n")) // sende current tall å kanskje?
+		b,_ := json.Marshal(currentStruct)
+		conn.Write(b)	
+		Println("Sent %d",currentStruct.teller) 		
+		currentStruct.teller =  currentStruct.teller +1
+		time.Sleep(1*time.Second)
 	}
 }
 
-func listenForPrimary(tellerChan chan<- int64, backupChan chan<- int) {
-	buffer := make([]byte, 8)
+func listenForPrimary(tellerChan chan int, backupChan chan int, primaryChan chan int, 
+currentStruct *TellerStruct) {
+	buffer := make([]byte, 1024)
 	udpAddr, err := ResolveUDPAddr("udp", ":30169")
+	checkError(err)
 	conn, err := ListenUDP("udp", udpAddr)
 	checkError(err)
-
 	for {
+		conn.SetReadDeadline(time.Now().Add(3*time.Second))
 		n, err := conn.Read(buffer)
+		if err != nil{
+			Println("Tar over som primary!")
+			//Println((*currentStruct).teller)
+			//tellerChan <- (*currentStruct).teller
+			primaryChan<- 1
+			//time.Sleep(1*time.Second)
+			break
+		}
+		err = json.Unmarshal(buffer[0:n], currentStruct)
 		checkError(err)
-		current, _ := binary.Varint(buffer)
-		tellerChan <- current
-		backupChan <- 1
-		//Printf("Rcv %d bytes: %s\n",n, buffer)
+		tellerChan<- (*currentStruct).teller
+		backupChan<- 1
 	}
+
 }
 
 func checkError(err error) {
