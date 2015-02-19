@@ -13,7 +13,7 @@ import (
 
 
 type TellerStruct struct {
-		teller int
+		Teller int
 	}
 
 func main() {
@@ -42,15 +42,15 @@ func main() {
 		select {
 			case <-primaryChan:
 				Println("Start Alive Broadcast")
-				//tellerChan<- currentStruct.teller
-				go imAlive(currentStruct.teller)
+				//tellerChan<- currentStruct.Teller
+				go imAlive(currentStruct.Teller)
 			case <-backupChan:
 				//Println("hei fra primary state")
 				// Vente x antall sekund
 				// Hvis listen for primary ikkje får melding
 				// --> I AM PRIMARY!
 				//currentStruct.teller = <-tellerChan
-				Println("Siste tall motatt fra primary: ", currentStruct.teller)
+				Println("Siste tall motatt fra primary: ", currentStruct.Teller)
 		}
 	}
 }
@@ -66,9 +66,10 @@ func imAlive(teller int) { // Bare sende siste tal for simplicity
 	//currentStruct.teller = <-tellerChan
 	for {
 		b,_ := json.Marshal(currentStruct)
+		Println(b)
 		conn.Write(b)	
-		Println("Sent: ",currentStruct.teller) 		
-		currentStruct.teller = currentStruct.teller + 1
+		Println("Sent: ",currentStruct.Teller) 		
+		currentStruct.Teller = currentStruct.Teller + 1
 		time.Sleep(1*time.Second)
 	}
 }

@@ -9,13 +9,13 @@ import (
 )
 
 type TellerStruct struct{
-	teller int
+	Teller int
 }
 
 func main() {
 	runtime.GOMAXPROCS(runtime.NumCPU())
 
-	buffer := make([]byte, 1024)
+	buffer := make([]byte, 8)
 	udpAddr, err := net.ResolveUDPAddr("udp", ":30169")
 	conn, err := net.ListenUDP("udp", udpAddr)
 	if err != nil {
@@ -23,16 +23,16 @@ func main() {
 		return
 	}
 	
-	currentStruct := TellerStruct{0}
+	currentStruct := TellerStruct{Teller: 1}
 	
 	for {
 		n, _ := conn.Read(buffer)
-		err = json.Unmarshal(buffer[0:n],&currentStruct)
+		err = json.Unmarshal(buffer[:n], &currentStruct)
 		if err != nil {
 			fmt.Printf("Noe gikk galt %v", err)
 			return
 		} 
-		fmt.Printf("Rcv %d bytes: %d\n", n, currentStruct.teller)
+		fmt.Printf("Rcv %d bytes: %d\n", n, currentStruct.Teller)
 	}
 
 	//fmt.Println("Hello World!")
