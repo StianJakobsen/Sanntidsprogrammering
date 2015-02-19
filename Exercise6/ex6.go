@@ -66,6 +66,7 @@ func imAlive(teller int) { // Bare sende siste tal for simplicity
 	//currentStruct.teller = <-tellerChan
 	for {
 		b,_ := json.Marshal(currentStruct)
+		Println(b)
 		conn.Write(b)	
 		Println("Sent: ",currentStruct.teller) 		
 		currentStruct.teller = currentStruct.teller + 1
