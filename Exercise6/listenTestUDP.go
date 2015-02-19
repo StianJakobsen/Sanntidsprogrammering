@@ -3,25 +3,37 @@ package main
 
 import (
 	"fmt"
-	"os"
 	"runtime"
+	"encoding/json"
+	"net"
 )
+
+type TellerStruct struct{
+	teller int
+}
 
 func main() {
 	runtime.GOMAXPROCS(runtime.NumCPU())
 
 	buffer := make([]byte, 1024)
-	udpAddr, err := ResolveUDPAddr("udp", ":30169")
-	conn, err := ListenUDP("udp", udpAddr)
+	udpAddr, err := net.ResolveUDPAddr("udp", ":30169")
+	conn, err := net.ListenUDP("udp", udpAddr)
 	if err != nil {
 		fmt.Println("ERROR, %v", err)
 		return
 	}
-
+	
+	currentStruct := TellerStruct{0}
+	
 	for {
 		n, _ := conn.Read(buffer)
-		fmt.Printf("Rcv %d bytes: %d\n", n, buffer)
+		err = json.Unmarshal(buffer[0:n],currentStruct)
+		if err != nil {
+			fmt.Println("Noe gikk galt %v", err)
+			return
+		} 
+		fmt.Printf("Rcv %d bytes: %d\n", n, currentStruct.teller)
 	}
 
-	fmt.Println("Hello World!")
+	//fmt.Println("Hello World!")
 }

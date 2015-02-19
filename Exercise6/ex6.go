@@ -42,33 +42,33 @@ func main() {
 		select {
 			case <-primaryChan:
 				Println("Start Alive Broadcast")
-				tellerChan <-currentStruct.teller
-				go imAlive(tellerChan)
+				//tellerChan<- currentStruct.teller
+				go imAlive(currentStruct.teller)
 			case <-backupChan:
-				Println("hei fra primary state")
+				//Println("hei fra primary state")
 				// Vente x antall sekund
 				// Hvis listen for primary ikkje får melding
 				// --> I AM PRIMARY!
-				currentStruct.teller = <-tellerChan
-				Println(currentStruct.teller)
+				//currentStruct.teller = <-tellerChan
+				Println("Siste tall motatt fra primary: ", currentStruct.teller)
 		}
 	}
 }
 
 
-func imAlive(tellerChan chan int) { // Bare sende siste tal for simplicity
-	udpAddr, err := ResolveUDPAddr("udp", "129.241.187.255:30169") // Broadcast (rektig ip?)
+func imAlive(teller int) { // Bare sende siste tal for simplicity
+	udpAddr, err := ResolveUDPAddr("udp", "192.168.145.255:30169") // Broadcast (rektig ip?)
 	checkError(err)
 	conn, err := DialUDP("udp", nil, udpAddr)
 	checkError(err)
-	currentStruct := TellerStruct{0}
+	currentStruct := TellerStruct{teller}
 	Println("imalive?")
-	currentStruct.teller = <-tellerChan
+	//currentStruct.teller = <-tellerChan
 	for {
 		b,_ := json.Marshal(currentStruct)
 		conn.Write(b)	
-		Println("Sent %d",currentStruct.teller) 		
-		currentStruct.teller =  currentStruct.teller +1
+		Println("Sent: ",currentStruct.teller) 		
+		currentStruct.teller = currentStruct.teller + 1
 		time.Sleep(1*time.Second)
 	}
 }
@@ -93,7 +93,7 @@ currentStruct *TellerStruct) {
 		}
 		err = json.Unmarshal(buffer[0:n], currentStruct)
 		checkError(err)
-		tellerChan<- (*currentStruct).teller
+		//tellerChan<- (*currentStruct).teller
 		backupChan<- 1
 	}
 
