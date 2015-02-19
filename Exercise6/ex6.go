@@ -18,38 +18,19 @@ type TellerStruct struct {
 
 func main() {
 	runtime.GOMAXPROCS(runtime.NumCPU()) // I guess this is a hint to what GOMAXPROCS does...
-	//buffer := make([]byte, 1024)
+
 	currentStruct := TellerStruct{0}
-
-	
-
-	//current := 0
-	tellerChan := make(chan int)
-	primaryChan := make(chan int) // kanskje bruke til å passe på at eg er primary
+	primaryChan := make(chan int)
 	backupChan := make(chan int)
-
-
-
-	//tellerChan <- currentStruct.teller
-	//Println(<-tellerChan)
-	//backupChan <- 1
-	//primaryChan <- 1
 	
 	go listenForPrimary(tellerChan, backupChan, primaryChan, &currentStruct)
 
 	for {
-		//Println("forloopmain")
 		select {
 			case <-primaryChan:
 				Println("Start Alive Broadcast")
-				//tellerChan<- currentStruct.Teller
 				go imAlive(currentStruct.Teller)
 			case <-backupChan:
-				//Println("hei fra primary state")
-				// Vente x antall sekund
-				// Hvis listen for primary ikkje får melding
-				// --> I AM PRIMARY!
-				//currentStruct.teller = <-tellerChan
 				Println("Siste tall motatt fra primary: ", currentStruct.Teller)
 		}
 	}
@@ -57,16 +38,14 @@ func main() {
 
 
 func imAlive(teller int) { // Bare sende siste tal for simplicity
-	udpAddr, err := ResolveUDPAddr("udp", "192.168.145.255:30169") // Broadcast (rektig ip?)
+	udpAddr, err := ResolveUDPAddr("udp", "192.168.145.255:30169") // Broadcast (endre ip nettverket du sitter på)
 	checkError(err)
 	conn, err := DialUDP("udp", nil, udpAddr)
 	checkError(err)
 	currentStruct := TellerStruct{teller}
-	//Println("imalive?")
-	//currentStruct.teller = <-tellerChan
+
 	for {
 		b,_ := json.Marshal(currentStruct)
-		Println(b)
 		conn.Write(b)	
 		Println("Sent: ",currentStruct.Teller) 		
 		currentStruct.Teller = currentStruct.Teller + 1
@@ -74,8 +53,7 @@ func imAlive(teller int) { // Bare sende siste tal for simplicity
 	}
 }
 
-func listenForPrimary(tellerChan chan int, backupChan chan int, primaryChan chan int, 
-currentStruct *TellerStruct) {
+func listenForPrimary(backupChan chan int, primaryChan chan int, currentStruct *TellerStruct) {
 	buffer := make([]byte, 1024)
 	udpAddr, err := ResolveUDPAddr("udp", ":30169")
 	checkError(err)
@@ -86,15 +64,12 @@ currentStruct *TellerStruct) {
 		n, err := conn.Read(buffer)
 		if err != nil{
 			Println("Tar over som primary!")
-			//Println((*currentStruct).teller)
-			//tellerChan <- (*currentStruct).teller
 			primaryChan<- 1
-			//time.Sleep(1*time.Second)
 			break
 		}
+
 		err = json.Unmarshal(buffer[0:n], currentStruct)
 		checkError(err)
-		//tellerChan<- (*currentStruct).teller
 		backupChan<- 1
 	}
 
@@ -102,7 +77,7 @@ currentStruct *TellerStruct) {
 
 func checkError(err error) {
 	if err != nil {
-		Println("Noe gikk galt %v", err) //err.Error()
-		return                           //os.exit(1)
+		Println("Noe gikk galt %v", err)
+		return
 	}
 }
