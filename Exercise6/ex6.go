@@ -38,7 +38,7 @@ func main() {
 	go listenForPrimary(tellerChan, backupChan, primaryChan, &currentStruct)
 
 	for {
-		Println("forloopmain")
+		//Println("forloopmain")
 		select {
 			case <-primaryChan:
 				Println("Start Alive Broadcast")
@@ -62,7 +62,7 @@ func imAlive(teller int) { // Bare sende siste tal for simplicity
 	conn, err := DialUDP("udp", nil, udpAddr)
 	checkError(err)
 	currentStruct := TellerStruct{teller}
-	Println("imalive?")
+	//Println("imalive?")
 	//currentStruct.teller = <-tellerChan
 	for {
 		b,_ := json.Marshal(currentStruct)
