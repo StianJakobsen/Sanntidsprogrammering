@@ -23,7 +23,7 @@ func main() {
 	primaryChan := make(chan int)
 	backupChan := make(chan int)
 	
-	go listenForPrimary(tellerChan, backupChan, primaryChan, &currentStruct)
+	go listenForPrimary(backupChan, primaryChan, &currentStruct)
 
 	for {
 		select {
