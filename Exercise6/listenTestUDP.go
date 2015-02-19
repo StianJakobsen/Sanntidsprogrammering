@@ -27,9 +27,9 @@ func main() {
 	
 	for {
 		n, _ := conn.Read(buffer)
-		err = json.Unmarshal(buffer[0:n],currentStruct)
+		err = json.Unmarshal(buffer[0:n],&currentStruct)
 		if err != nil {
-			fmt.Println("Noe gikk galt %v", err)
+			fmt.Printf("Noe gikk galt %v", err)
 			return
 		} 
 		fmt.Printf("Rcv %d bytes: %d\n", n, currentStruct.teller)
