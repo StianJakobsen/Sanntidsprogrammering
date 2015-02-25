@@ -38,7 +38,7 @@ func main() {
 
 
 func imAlive(teller int) { // Bare sende siste tal for simplicity
-	udpAddr, err := ResolveUDPAddr("udp", "192.168.145.255:30169") // Broadcast (endre ip nettverket du sitter på)
+	udpAddr, err := ResolveUDPAddr("udp", "129.241.187.255:30169") // Broadcast (endre ip nettverket du sitter på)
 	checkError(err)
 	conn, err := DialUDP("udp", nil, udpAddr)
 	checkError(err)
