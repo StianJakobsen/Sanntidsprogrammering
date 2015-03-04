@@ -35,10 +35,24 @@ func initElevator() {
 	// + noko greier her
 }
 
-func SetLight(floor, on/off) {
+func SetDoorOpenLamp(value bool) {
+
+	if value {
+		C.io_set_bit(LIGHT_DOOR_OPEN);
+	else 
+		C.io_clear_bit(LIGHT_DOOR_OPEN);      
+		}
 
 }
 
+func SetStopLamp(value bool) {
+	if value {
+		C.io_set_bit(LIGHT_STOP);
+	else
+		C.io_clear_bit(LIGHT_STOP);
+		}
+}
+func SetButtonLamp(
 
 func GetFloor() {
 
