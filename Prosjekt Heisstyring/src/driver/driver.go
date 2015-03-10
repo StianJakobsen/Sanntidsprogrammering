@@ -19,7 +19,7 @@ const upButtons := [N_FLOORS]int{BUTTON_UP1, BUTTON_UP2, BUTTON_UP3, BUTTON_UP4}
 const downButtons := [N_FLOORS]int{BUTTON_DOWN1, BUTTON_DOWN2, BUTTON_DOWN3, BUTTON_DOWN4}
 const cmdButtons := [N_FLOORS]int{BUTTON_COMMAND1, BUTTON_COMMAND2, BUTTON_COMMAND3, BUTTON_COMMAND4}
 
-func initElevator() {
+func initElevator() { // sjekke denna
 	if !C.io_init(){
 		return 0
 	}
@@ -35,41 +35,85 @@ func initElevator() {
 	// + noko greier her
 }
 
+func SetMotorDirection(dir int) {
+	if dir == 0 {
+		C.io_write_analog(MOTOR, 0)	
+	} else if dir > 0 {
+		C.io_clear_bit(MOTORDIR)
+		C.io_write_analog(MOTOR, 2800)
+	} else if dir < 0 {
+		C.io_set_bit(MOTORDIR)
+		C.io_write_analog(MOTOR, 2800)
+	}
+	
+}
+
 func SetDoorOpenLamp(value bool) {
-
 	if value {
-		C.io_set_bit(LIGHT_DOOR_OPEN);
-	else 
-		C.io_clear_bit(LIGHT_DOOR_OPEN);      
-		}
+		C.io_set_bit(LIGHT_DOOR_OPEN)
+	} else {
+		C.io_clear_bit(LIGHT_DOOR_OPEN)      
+	}
+}
 
+func GetObstructionSignal() int {
+	return C.io_read_bit(OBSTRUCTION)
+}
+
+func GetStopSignal() int {
+	return C.io_read_bit(STOP)
 }
 
 func SetStopLamp(value bool) {
 	if value {
 		C.io_set_bit(LIGHT_STOP);
-	else
+	} else {
 		C.io_clear_bit(LIGHT_STOP);
-		}
+	} 
 }
-func SetButtonLamp(
 
+func GetFloorSensorSignal() int {
+	if C.io_read_bit(SENSOR_FLOOR1) {
+		return 0 // ground floor
+	} else if C.io_read_bit(SENSOR_FLOOR2) {
+		return 1
+	} else if C.io_read_bit(SENSOR_FLOOR3) {
+		return 2
+	} else if C.io_read_bit(SENSOR_FLOOR4) {
+		return 3
+	} else {
+		return -1; // between floors
+	}
+}
+
+func SetFloorIndicator(floor int) { // one light must always be on
+	// sjekke om rektig input?
+	
+	if floor ??
+}
+
+func GetButtonSignal() {
+	
+}
+
+func SetButtonLamp(){
+	
+}
+
+
+
+
+
+////////////////////////////////////////////////////////////////////
 func GetFloor() {
 
 }
 
-func FloorIndicator(floor, on/off) { // one light must always be on
 
-}
 
 func ResetLights() {
 	
 }
 
-func ElevDirection(dir int) {
-	
-}
-
-func ElevDoorLamp
 
 
