@@ -1,7 +1,7 @@
 // channels
 package driver
 
-import "fmt"
+//import "fmt"
 
 //in port 4
 const PORT4 = 3
