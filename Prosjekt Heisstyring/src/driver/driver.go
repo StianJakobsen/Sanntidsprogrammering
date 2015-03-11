@@ -19,20 +19,35 @@ const upButtons := [N_FLOORS]int{BUTTON_UP1, BUTTON_UP2, BUTTON_UP3, BUTTON_UP4}
 const downButtons := [N_FLOORS]int{BUTTON_DOWN1, BUTTON_DOWN2, BUTTON_DOWN3, BUTTON_DOWN4}
 const cmdButtons := [N_FLOORS]int{BUTTON_COMMAND1, BUTTON_COMMAND2, BUTTON_COMMAND3, BUTTON_COMMAND4}
 
-func initElevator() { // sjekke denna
+const {
+BUTTON_CALL_UP int = iota
+BUTTON_CALL_DOWN int= iota
+BUTTON_COMMAND int = iota 
+}
+const{
+DIRN_DOWN int = iota -1
+DIRN_STOP int = iota -1
+DIRN_UP int = iota -1
+}
+
+func initElevator() int { // sjekke denna
 	if !C.io_init(){
 		return 0
 	}
 	for i := 0; i < N_FLOORS; i++ {
 		if i != 0{
-			C.io_clear_bit(downlights[i])
+			SetButtonLamp(BUTTON_CALL_DOWN, i, 0)
 		} 		
 		if i != N_FLOORS - 1 {
-			C.io_clear_bit(upLights[i])
+			SetButtonLamp(BUTTON_CALL_UP, i, 0)
 		}
-		C.io_clear_bit(cmdLights[i])
-	} 
-	// + noko greier her
+		SetButtonLamp(BUTTON_COMMAND, i, 0)
+	}
+	SetStopLamp(0)
+	SetDoorOpenLamp(0) 
+	SetFloorIndicator(0)
+	// + noko greiar herat
+	return 0
 }
 
 func SetMotorDirection(dir int) {
@@ -88,32 +103,89 @@ func GetFloorSensorSignal() int {
 
 func SetFloorIndicator(floor int) { // one light must always be on
 	// sjekke om rektig input?
-	
-	if floor ??
+	if !(errorFloor(floor)) {
+	byteFloor := byte(floor)
+	if byteFloor & 0x02 {
+	C.io_set_bit(LIGHT_FLOOR_IND1)}
+	else {
+	C.io_clear_bit(LIGHT_FLOOR_IND1)}
+	if byteFloor & 0x01{
+	C.io_set_bit(LIGHT_FLOOR_IND2)}
+	else {
+	C.io_clear_bit(LIGHT_FLOOR_IND2)}
+}}
+
+func GetButtonSignal(button int, floor int) int{
+	if !(errorFloor(floor)){
+		if(!(button == BUTTON_CALL_UP && floor == N_FLOORS-1)){
+			if(!(button == BUTTON_CALL_DOWN && floor == 0)){
+				if(button == BUTTON_CALL_UP || button == BUTTON_CALL_DOWN || button == BUTTON_COMMAND){
+					if button == BUTTON_CALL_UP {
+						if C.io_read_bit(upButtons[floor]) {
+							return 1
+						} else {
+							return 0
+						}
+					} else if button == BUTTON_CALL_DOWN {
+						if C.io_read_bit(downButtons[floor]) {
+							return 1
+						} else {
+							return 0
+						}
+					} else {
+						if C.io_read_bit(cmbButtons[floor]) {
+							return 1
+						} else {
+							return 0
+						}
+					}
 }
+}}}}
 
-func GetButtonSignal() {
-	
+func SetButtonLamp(button int, floor int, value int) {
+	if !(errorFloor(floor)){
+		if(!(button == BUTTON_CALL_UP && floor == N_FLOORS-1)){
+			if(!(button == BUTTON_CALL_DOWN && floor == 0)){
+				if(button == BUTTON_CALL_UP || button == BUTTON_CALL_DOWN || button == BUTTON_COMMAND){
+					if button == BUTTON_CALL_UP {
+						if value {
+							C.io_set_bit(upButtons[floor])
+						} else {
+							C.io_clear_bit(upButtons[floor])
+						}
+					} else if button == BUTTON_CALL_DOWN {
+						if value {
+							C.io_set_bit(downButtons[floor])
+						} else {
+							C.io_clear_bit(upButtons[floor])
+						}
+					} else {
+						if value {
+							C.io_set_bit(upButtons[floor])
+						} else {
+							C.io_clear_bit(upButtons[floor])
+						}
+					}					
 }
-
-func SetButtonLamp(){
-	
+}}}}
+ 
+func errorFloor(floor int) bool{
+if(floor > N_FLOORS || floor < 0){
+return true}
+else{
+return false} 
 }
-
-
 
 
 
 ////////////////////////////////////////////////////////////////////
-func GetFloor() {
-
-}
 
 
 
-func ResetLights() {
-	
-}
+
+//func ResetLights() {
+//	
+//}
 
 
 
