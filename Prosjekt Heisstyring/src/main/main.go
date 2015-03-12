@@ -4,6 +4,7 @@ import (
 	"fmt"
 	//"udp"
 	"driver"
+	"control"
 )
 
 func main() {
@@ -14,18 +15,17 @@ func main() {
 	
 	fmt.Println("Press STOP button to stop elevator and exit program.")
 	
-	driver.SetMotorDirection(driver.DIRN_UP)
+
 	
 	for {
-		if driver.GetFloorSensorSignal() == driver.N_FLOORS - 1 {
-			driver.SetMotorDirection(driver.DIRN_DOWN)
-		} else if driver.GetFloorSensorSignal() == 0 {
-			driver.SetMotorDirection(driver.DIRN_UP)
-		}
+		test1, test2 := control.GetCommand()
+		control.GoToFloor(test1,test2)
+	
+		
 		if driver.GetStopSignal() != 0 {
 			driver.SetMotorDirection(driver.DIRN_STOP)
 			break
 		}
-	driver.SetFloorIndicator(driver.GetFloorSensorSignal())
+	
 	}
 }		 

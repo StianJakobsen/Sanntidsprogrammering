@@ -17,7 +17,7 @@ var cmdLights = [N_FLOORS]int{LIGHT_COMMAND1,LIGHT_COMMAND2, LIGHT_COMMAND3, LIG
 //Buttons
 var upButtons = [N_FLOORS]int{BUTTON_UP1, BUTTON_UP2, BUTTON_UP3, BUTTON_UP4}
 var downButtons = [N_FLOORS]int{BUTTON_DOWN1, BUTTON_DOWN2, BUTTON_DOWN3, BUTTON_DOWN4}
-var cmdButtons = [N_FLOORS]int{BUTTON_COMMAND1, BUTTON_COMMAND2, BUTTON_COMMAND3, BUTTON_COMMAND4}
+var CmdButtons = [N_FLOORS]int{BUTTON_COMMAND1, BUTTON_COMMAND2, BUTTON_COMMAND3, BUTTON_COMMAND4}
 
 const (
 BUTTON_CALL_UP int = iota
@@ -52,7 +52,9 @@ func InitElevator() int { // sjekke denna
 	}
 	SetStopLamp(false)
 	SetDoorOpenLamp(false) 
-	SetFloorIndicator(0)
+	if GetFloorSensorSignal() != -1 {
+		SetFloorIndicator(GetFloorSensorSignal())
+		}
 	// + noko greiar herat
 	return 1
 }
@@ -143,7 +145,7 @@ func GetButtonSignal(button int, floor int) int{
 							return 0
 						}
 					} else {
-						if io_read_bit(cmdButtons[floor]) != 0 {
+						if io_read_bit(CmdButtons[floor]) != 0 {
 							return 1
 						} else {
 							return 0
@@ -161,21 +163,21 @@ func SetButtonLamp(button int, floor int, value int) {
 				if(button == BUTTON_CALL_UP || button == BUTTON_CALL_DOWN || button == BUTTON_COMMAND){
 					if button == BUTTON_CALL_UP {
 						if value != 0 {
-							io_set_bit(upButtons[floor])
+							io_set_bit(upLights[floor])
 						} else {
-							io_clear_bit(upButtons[floor])
+							io_clear_bit(upLights[floor])
 						}
 					} else if button == BUTTON_CALL_DOWN {
 						if value != 0 {
-							io_set_bit(downButtons[floor])
+							io_set_bit(downLights[floor])
 						} else {
-							io_clear_bit(upButtons[floor])
+							io_clear_bit(downLights[floor])
 						}
 					} else {
 						if value != 0 {
-							io_set_bit(upButtons[floor])
+							io_set_bit(cmdLights[floor])
 						} else {
-							io_clear_bit(upButtons[floor])
+							io_clear_bit(cmdLights[floor])
 						}
 					}					
 }
