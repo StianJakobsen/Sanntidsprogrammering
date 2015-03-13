@@ -20,7 +20,7 @@ func main() {
 
 	fmt.Println("Press STOP button to stop elevator and exit program.")
 	
-	go control.GoToFloor(2,floorChan)
+	go control.GoToFloor(1,floorChan)
 	
 	for {
 		_, temp := control.GetCommand()
