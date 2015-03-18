@@ -40,7 +40,7 @@ func GoToFloor(button int, floorChan chan int) {
 			fmt.Printf("Hva er done? %d",done)
 			driver.SetButtonLamp(button,floor,1)
 			fmt.Println("Her er flooooooooor: %d", floor)			
-			if floor == driver.GetFloorSensorSignal() && done == 0 {
+			if floor == driver.GetFloorSensorSignal()  {
 				driver.SetDoorOpenLamp(true)				
 				driver.SetMotorDirection(driver.DIRN_STOP)
 				time.Sleep(2*time.Second)
