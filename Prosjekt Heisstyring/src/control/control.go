@@ -7,17 +7,23 @@ import (
 	"time"
 	"driver"
 	//"control"
+	"os"
 )
 
 func GoToFloor(button int, floorChan chan int) {
 	floor := <-floorChan
-	
+	if driver.GetFloorSensorSignal() == -1 {
+		driver.SetMotorDirection(driver.DIRN_DOWN)
+	}
 	var done int
 	temp:= floor	
-	if(driver.GetFloorSensorSignal() == -1) {
-		driver.SetMotorDirection(driver.DIRN_DOWN)
-		}
-	for {
+	//polse:
+	for {	
+		if driver.GetStopSignal() != 0 {
+			driver.SetMotorDirection(driver.DIRN_STOP)
+			fmt.Println("Stop button pressed")			
+			os.Exit(1)	
+			}	
 		select {
 		
 		case temp = <-floorChan:
@@ -30,20 +36,24 @@ func GoToFloor(button int, floorChan chan int) {
 			//}
 
 		default:			
-						
+			if driver.GetStopSignal() != 0 {
+				driver.SetMotorDirection(driver.DIRN_STOP)
+				os.Exit(1)	
+			}		
 			driver.SetFloorIndicator(driver.GetFloorSensorSignal())	
 			if done == 1{
 				fmt.Printf("GAA IN EHFE")				
 				floor = temp
 				done = 0
 			}	
-			fmt.Printf("Hva er done? %d",done)
+			fmt.Printf("Hva er done? %d\n",done)
 			driver.SetButtonLamp(button,floor,1)
-			fmt.Println("Her er flooooooooor: %d", floor)			
+			fmt.Printf("Her er flooooooooor: %d\n", floor)
+				
 			if floor == driver.GetFloorSensorSignal()  {
 				driver.SetDoorOpenLamp(true)				
 				driver.SetMotorDirection(driver.DIRN_STOP)
-				time.Sleep(2*time.Second)
+				time.Sleep(1*time.Second)
 				driver.SetDoorOpenLamp(false)
 				driver.SetFloorIndicator(floor)
 				driver.SetButtonLamp(button,floor,0)
@@ -59,11 +69,9 @@ func GoToFloor(button int, floorChan chan int) {
 			} else if floor < driver.GetFloorSensorSignal() && driver.GetFloorSensorSignal() != -1 {
 			driver.SetMotorDirection(driver.DIRN_DOWN)
 			}
-			if driver.GetStopSignal() != 0 {
-				driver.SetMotorDirection(driver.DIRN_STOP)
-				break
-			}
+
 		}
+	
 	}
 }
 
@@ -81,7 +89,7 @@ func GetDestination() (int,int) {
 			break
 		}
 	}
-return 666,666
+return -1,-1
 }
 
 func GetCommand() (int,int) {
@@ -98,7 +106,7 @@ func GetCommand() (int,int) {
 			break
 		}
 	}
-return 666,666
+return -1,-1
 }
 
 

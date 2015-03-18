@@ -2,13 +2,17 @@ package main
 
 import ( 
 	"fmt"
-	//"udp"
+	"udp"
 	"driver"
 	"control"
 	"runtime"
+	//"net"
+	//"os"
 )
 
 func main() {
+	
+	fmt.Println(udp.GetID()*10)
 	runtime.GOMAXPROCS(runtime.NumCPU())
 	floorChan := make(chan int)	
 

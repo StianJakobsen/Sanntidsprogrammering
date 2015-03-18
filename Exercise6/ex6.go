@@ -9,6 +9,7 @@ import (
 	"runtime"
 	"time"
 	"encoding/json"
+	"strconv"
 )
 
 
@@ -60,7 +61,7 @@ func listenForPrimary(backupChan chan int, primaryChan chan int, currentStruct *
 	conn, err := ListenUDP("udp", udpAddr)
 	checkError(err)
 	for {
-		conn.SetReadDeadline(time.Now().Add(3*time.Second))
+		conn.SetReadDeadline(time.Now().Add(3*time.Seif cond))
 		n, err := conn.Read(buffer)
 		if err != nil{
 			Println("Tar over som primary!")

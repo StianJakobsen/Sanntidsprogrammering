@@ -2,13 +2,17 @@ package main
 
 import ( 
 	"fmt"
-	//"udp"
+	"udp"
 	"driver"
 	"control"
 	"runtime"
+	//"net"
+	//"os"
 )
 
 func main() {
+	
+	fmt.Println(udp.GetID()/10)
 	runtime.GOMAXPROCS(runtime.NumCPU())
 	floorChan := make(chan int)	
 
@@ -20,7 +24,7 @@ func main() {
 
 	fmt.Println("Press STOP button to stop elevator and exit program.")
 	
-	go control.GoToFloor(1,floorChan)
+	go control.GoToFloor(2,floorChan)
 	
 	for {
 		_, temp := control.GetCommand()
