@@ -2,27 +2,38 @@
 package udp
 import (. "fmt" // Using '.' to avoid prefixing functions with their package names
 		// This is probably not a good idea for large projects...
-	"runtime"
+	//"runtime"
 	"time"
-	."net"
-	"bufio"
+	"net"
+	//"bufio"
 	"os"
 	"strconv"
-	
+	"driver"
 )
 
 
-type Data struct {
-	Teller int
+type Status struct {
+	Running int
+	CurrentFloor int
+	NextFloor int
+	Primary bool
+	ID int
 }
 
 type Data2 struct {
 	Teller int
 }
 
-
+func SetStatus(Status *Status, running int, NextFloor int) {
+	(*Status).Running = running
+	(*Status).CurrentFloor = driver.GetFloorSensorSignal()
+	(*Status).NextFloor = NextFloor
+	
+	(*Status).ID = GetID()
+	//Println(" id i func:", (*Status).ID)
+}
 func GetID() int {
-	addrs, err := InterfaceAddrs()
+	addrs, err := net.InterfaceAddrs()
 	if err != nil {
 		os.Stderr.WriteString("Oops: " + err.Error() + "\n")
 		os.Exit(1)
@@ -30,7 +41,7 @@ func GetID() int {
  	var ipAddr string
 	for _, a := range addrs {
 		
-		if ipnet, ok := a.(*IPNet); ok && !ipnet.IP.IsLoopback() {
+		if ipnet, ok := a.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
 			if ipnet.IP.To4() != nil {
 				ipAddr = ipnet.IP.String()
 			}
@@ -43,8 +54,8 @@ func GetID() int {
 
 func listen() {
 	buffer := make([]byte, 1024)
-	udpAddr, err := ResolveUDPAddr("udp", ":32222")
-	conn, err := ListenUDP("udp", udpAddr)
+	udpAddr, err := net.ResolveUDPAddr("udp", ":32222")
+	conn, err := net.ListenUDP("udp", udpAddr)
 	checkError(err)
 	for {
 		Println("Hører")
@@ -56,9 +67,9 @@ func listen() {
 
 
 func send(ip []byte) { // data []byte
-	udpAddr, err := ResolveUDPAddr("udp", string(ip[:21]))
+	udpAddr, err := net.ResolveUDPAddr("udp", string(ip[:21]))
 	checkError(err)
-	conn, err := DialUDP("udp", nil, udpAddr)
+	conn, err := net.DialUDP("udp", nil, udpAddr)
 	checkError(err)
 	for {
 		Println("SENDER")
@@ -73,8 +84,13 @@ func send(ip []byte) { // data []byte
 
 }
 
-
-func UdpInit(localListenPort, broadcastListenPort, message_size int, send_ch, receive_ch chan Udp_message) (err error) {
+// send_ch, receive_ch chan Udp_message
+func UdpInit(localListenPort int, broadcastListenPort int, message_size int, Status *Status) (err error) {
+	buffer := make([]byte, message_size)
+	(*Status).Primary = false
+	SetStatus(Status,0,driver.GetFloorSensorSignal())	
+	//InitStatus(*Status)
+	//Println("SE HER::::: ", (Status).ID)
 	//Generating broadcast address
 	baddr, err = net.ResolveUDPAddr("udp4", "255.255.255.255:"+strconv.Itoa(broadcastListenPort))
 	if err != nil {
@@ -101,19 +117,28 @@ func UdpInit(localListenPort, broadcastListenPort, message_size int, send_ch, re
 		return err
 	}
 
-	go udp_receive_server(localListenConn, broadcastListenConn, message_size, receive_ch)
-	go udp_transmit_server(localListenConn, broadcastListenConn, send_ch)
+	//go udp_receive_server(localListenConn, broadcastListenConn, message_size receive_ch)
+	//go udp_transmit_server(localListenConn, broadcastListenConn ,send_ch)
+
+	//Setting first primary
+	broadcastListenConn.SetReadDeadline(time.Now().Add(3*time.Second))
+	_, err = broadcastListenConn.Read(buffer)
+	if err != nil{
+		Println("Tar over som primary!")
+		(*Status).Primary = true	
+	}
+
 
 	//	fmt.Printf("Generating local address: \t Network(): %s \t String(): %s \n", laddr.Network(), laddr.String())
 	//	fmt.Printf("Generating broadcast address: \t Network(): %s \t String(): %s \n", baddr.Network(), baddr.String())
 	return err
 }
 
-
+/*
 func SendCommandList() { // Bare sende siste tal for simplicity
-	udpAddr, err := ResolveUDPAddr("udp", "129.241.187.255:30169") // Broadcast (endre ip nettverket du sitter på)
+	udpAddr, err := net.ResolveUDPAddr("udp", "129.241.187.255:30169") // Broadcast (endre ip nettverket du sitter på)
 	checkError(err)
-	conn, err := DialUDP("udp", nil, udpAddr)
+	conn, err := net.DialUDP("udp", nil, udpAddr)
 	checkError(err)
 	currentStruct := TellerStruct{teller}
 
@@ -124,34 +149,17 @@ func SendCommandList() { // Bare sende siste tal for simplicity
 		currentStruct.Teller = currentStruct.Teller + 1
 		time.Sleep(1*time.Second)
 	}
-}
+}*/
 
-func ListenForPrimary(backupChan chan int, primaryChan chan int, currentStruct *TellerStruct) {
-	buffer := make([]byte, 1024)
-	udpAddr, err := ResolveUDPAddr("udp", ":30169")
-	checkError(err)
-	conn, err := ListenUDP("udp", udpAddr)
-	checkError(err)
-	for {
-		conn.SetReadDeadline(time.Now().Add(3*time.Seif cond))
-		n, err := conn.Read(buffer)
-		if err != nil{
-			Println("Tar over som primary!")
-			primaryChan<- 1
-			break
-		}
 
-		err = json.Unmarshal(buffer[0:n], currentStruct)
-		checkError(err)
-		backupChan<- 1
-	}
 
-}
 
+
+/*
 func SendCommand(floorChan chan int) {
-	udpAddr, err := ResolveUDPAddr("udp", "129.241.187.255:30169") // Broadcast (endre ip nettverket du sitter på)
+	udpAddr, err := net.ResolveUDPAddr("udp", "129.241.187.255:30169") // Broadcast (endre ip nettverket du sitter på)
 	checkError(err)
-	conn, err := DialUDP("udp", nil, udpAddr)
+	conn, err := net.DialUDP("udp", nil, udpAddr)
 	checkError(err)
 	currentStruct := TellerStruct{teller}
 
@@ -163,7 +171,7 @@ func SendCommand(floorChan chan int) {
 		time.Sleep(1*time.Second)
 	}
 
-}
+}*/
 
 func checkError(err error) {
 	if err != nil {
@@ -182,4 +190,4 @@ func checkError(err error) {
 
 
 
-}
+
