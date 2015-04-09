@@ -54,7 +54,7 @@ func GetID() int {
 
 func Listen() {
 	buffer := make([]byte, 1024)
-	udpAddr, err := net.ResolveUDPAddr("udp", ":30170")
+	udpAddr, err := net.ResolveUDPAddr("udp", ":39998")
 	conn, err := net.ListenUDP("udp", udpAddr)
 	checkError(err)
 	for {
@@ -67,14 +67,14 @@ func Listen() {
 
 
 func Send() { // data []byte
-	udpAddr, err := net.ResolveUDPAddr("udp", "129.241.187.255:30170")
+	udpAddr, err := net.ResolveUDPAddr("udp", "129.241.187.255:39998")
 	checkError(err)
 	conn, err := net.DialUDP("udp", nil, udpAddr)
 	checkError(err)
 	for {
 		Println("SENDER")
 		//buffer = nil
-		time.Sleep(1000*time.Millisecond)
+		time.Sleep(500*time.Millisecond)
 		
 		// WRITE
 		//Println("Er du der server??")
@@ -123,7 +123,7 @@ func UdpInit(localListenPort int, broadcastListenPort int, message_size int, Sta
 	//Setting first primary
 	broadcastListenConn.SetReadDeadline(time.Now().Add(3*time.Second))
 	_, err = broadcastListenConn.Read(buffer)
-	if err != nil{
+	if err != nil {
 		Println("Tar over som primary!")
 		(*Status).Primary = true	
 	}

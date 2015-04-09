@@ -17,7 +17,7 @@ func main() {
 	floorChan := make(chan int)
 	var Status udp.Status
 	
-	udp.UdpInit(30169, 30170, 1024, &Status)
+	udp.UdpInit(30169, 39998, 1024, &Status)
 	//Status.ID = udp.GetID()	
 	fmt.Println("Getfloor", driver.GetFloorSensorSignal())	
 	PrintStatus(Status)
