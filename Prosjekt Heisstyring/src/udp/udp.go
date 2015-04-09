@@ -52,9 +52,9 @@ func GetID() int {
 }
 
 
-func listen() {
+func Listen() {
 	buffer := make([]byte, 1024)
-	udpAddr, err := net.ResolveUDPAddr("udp", ":32222")
+	udpAddr, err := net.ResolveUDPAddr("udp", ":30170")
 	conn, err := net.ListenUDP("udp", udpAddr)
 	checkError(err)
 	for {
@@ -66,8 +66,8 @@ func listen() {
 }
 
 
-func send(ip []byte) { // data []byte
-	udpAddr, err := net.ResolveUDPAddr("udp", string(ip[:21]))
+func Send() { // data []byte
+	udpAddr, err := net.ResolveUDPAddr("udp", "129.241.187.255:30170")
 	checkError(err)
 	conn, err := net.DialUDP("udp", nil, udpAddr)
 	checkError(err)
@@ -78,7 +78,7 @@ func send(ip []byte) { // data []byte
 		
 		// WRITE
 		//Println("Er du der server??")
-		_, err := conn.Write([]byte("fetbmwazz\n")) // \x00
+		_, err := conn.Write([]byte("I AM PRIMARY!!!\n")) // \x00
 		checkError(err)
 	}
 

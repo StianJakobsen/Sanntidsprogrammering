@@ -27,9 +27,17 @@ func main() {
 		return
 	}
 		
+	
+
 
 	fmt.Println("Press STOP button to stop elevator and exit program.")
 	
+	if Status.Primary == true {
+		go udp.Send()
+	} else {
+		go udp.Listen()
+	}	
+		
 	go control.GoToFloor(2,floorChan,&Status)
 	
 	for {
@@ -37,10 +45,10 @@ func main() {
 		floorChan<- temp
 		PrintStatus(Status)
 		
-		if driver.GetStopSignal() != 0 {
+		/*if driver.GetStopSignal() != 0 {
 			driver.SetMotorDirection(driver.DIRN_STOP)
 			break
-		}
+		}*/
 	
 	}
 }		 

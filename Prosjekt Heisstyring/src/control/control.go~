@@ -56,9 +56,7 @@ func GoToFloor(button int, floorChan chan int,Status *udp.Status) {
 				
 				fmt.Println("Framme på:", floor)
 				udp.SetStatus(Status,0,floor)
-				fmt.Println("CurrentFloor: ",(Status).CurrentFloor)
-				fmt.Println("NextFloor: ", (Status).NextFloor)
-				fmt.Println("Running: ", (Status).Running)
+
 				driver.SetDoorOpenLamp(true)				
 				driver.SetMotorDirection(driver.DIRN_STOP)
 				time.Sleep(1*time.Second)
