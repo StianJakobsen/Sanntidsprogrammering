@@ -26,7 +26,7 @@ type Data struct {
 	//Running [3]int
 	//CurrentFloor [3]int
 	//NextFloor [3]int
-	PrimaryQ [3]int
+	PrimaryQ [3]string
 	
 }
 
@@ -102,7 +102,7 @@ func PrimaryBroadcast(baddr *net.UDPAddr, Data *Data) { // data []byte
 //func SlaveUpdate(
 
 // send_ch, receive_ch chan Udp_message
-func UdpInit(localListenPort int, broadcastListenPort int, message_size int, Status *Status, PrimaryQ *[]string, Data *Data) (err error) {
+func UdpInit(localListenPort int, broadcastListenPort int, message_size int, Status *Status, Data *Data) (err error) {
 	buffer := make([]byte, message_size)
 	
 
@@ -146,7 +146,7 @@ func UdpInit(localListenPort int, broadcastListenPort int, message_size int, Sta
 	if err != nil {
 		Println("Tar over som primary!")
 		(*Status).Primary = true
-		*Data.PrimaryQ = append(*PrimaryQ, strconv.Itoa(Status.ID)) 
+		*Data.PrimaryQ = append(*Data.PrimaryQ, strconv.Itoa(Status.ID)) 
 		go PrimaryBroadcast(baddr,Data)	
 	} else {
 		//*PrimaryQ = append(*PrimaryQ, string(buffer))
