@@ -52,9 +52,9 @@ func GetID() int {
 }
 
 
-func Listen() {
+func Listen(bconn *net.UDPConn) {
 	buffer := make([]byte, 1024)
-	udpAddr, err := net.ResolveUDPAddr("udp", ":39998")
+	udpAddr, err := net.ResolveUDPAddr("udp", "localhost:39998")
 	conn, err := net.ListenUDP("udp", udpAddr)
 	checkError(err)
 	for {
@@ -66,10 +66,10 @@ func Listen() {
 }
 
 
-func Send() { // data []byte
-	udpAddr, err := net.ResolveUDPAddr("udp", "129.241.187.255:39998")
-	checkError(err)
-	conn, err := net.DialUDP("udp", nil, udpAddr)
+func Send(baddr *net.UDPAddr) { // data []byte
+	//udpAddr, err := net.ResolveUDPAddr("udp", "129.241.187.255:39998")
+	//checkError(err)
+	bconn, err := net.DialUDP("udp", nil, baddr)
 	checkError(err)
 	for {
 		Println("SENDER")
@@ -78,7 +78,7 @@ func Send() { // data []byte
 		
 		// WRITE
 		//Println("Er du der server??")
-		_, err := conn.Write([]byte("I AM PRIMARY!!!\n")) // \x00
+		_, err := bconn.Write([]byte("I AM PRIMARY!!!\n")) // \x00
 		checkError(err)
 	}
 
@@ -91,8 +91,9 @@ func UdpInit(localListenPort int, broadcastListenPort int, message_size int, Sta
 	SetStatus(Status,0,driver.GetFloorSensorSignal())	
 	//InitStatus(*Status)
 	//Println("SE HER::::: ", (Status).ID)
+	
 	//Generating broadcast address
-	baddr, err = net.ResolveUDPAddr("udp4", "255.255.255.255:"+strconv.Itoa(broadcastListenPort))
+	baddr, err = net.ResolveUDPAddr("udp4", "129.241.187.255:"+strconv.Itoa(broadcastListenPort))
 	if err != nil {
 		return err
 	}
@@ -125,8 +126,12 @@ func UdpInit(localListenPort int, broadcastListenPort int, message_size int, Sta
 	_, err = broadcastListenConn.Read(buffer)
 	if err != nil {
 		Println("Tar over som primary!")
-		(*Status).Primary = true	
+		(*Status).Primary = true
+		go Send(baddr)	
+	} else {
+		go Listen(broadcastListenConn)
 	}
+
 
 
 	//	fmt.Printf("Generating local address: \t Network(): %s \t String(): %s \n", laddr.Network(), laddr.String())
