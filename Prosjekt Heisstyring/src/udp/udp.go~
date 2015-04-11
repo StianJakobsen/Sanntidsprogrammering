@@ -71,7 +71,7 @@ func PrimaryListen(bconn *net.UDPConn, Data *Data) {
 		checkError(err)
 		//Data = buffer
 		err = json.Unmarshal(buffer[0:n], Data)		
-		Println("her er primaryQen:", *PrimaryQ)		
+		Println("her er primaryQen:", Data.PrimaryQ)		
 		// Printf("Rcv %d bytes: %s\n",n, buffer)
 		
 		

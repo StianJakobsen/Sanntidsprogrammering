@@ -146,7 +146,7 @@ func UdpInit(localListenPort int, broadcastListenPort int, message_size int, Sta
 	if err != nil {
 		Println("Tar over som primary!")
 		(*Status).Primary = true
-		*PrimaryQ = append(*PrimaryQ, strconv.Itoa(Status.ID)) 
+		*Data.PrimaryQ = append(*PrimaryQ, strconv.Itoa(Status.ID)) 
 		go PrimaryBroadcast(baddr,Data)	
 	} else {
 		//*PrimaryQ = append(*PrimaryQ, string(buffer))
