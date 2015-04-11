@@ -16,8 +16,9 @@ func main() {
 	runtime.GOMAXPROCS(runtime.NumCPU())
 	floorChan := make(chan int)
 	var Status udp.Status
+	PrimaryQ := make([]string, 0, 3)
 	
-	udp.UdpInit(30169, 39998, 1024, &Status)
+	udp.UdpInit(30169, 39998, 1024, &Status, &PrimaryQ)
 	//Status.ID = udp.GetID()	
 	fmt.Println("Getfloor", driver.GetFloorSensorSignal())	
 	PrintStatus(Status)
