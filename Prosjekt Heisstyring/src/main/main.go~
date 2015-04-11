@@ -17,7 +17,6 @@ func main() {
 	floorChan := make(chan int)
 	var Status udp.Status
 	var Data udp.Data	
-	PrimaryQ := make([]string, 0, 3)
 	
 	udp.UdpInit(30169, 39998, 1024, &Status, &PrimaryQ, &Data)
 	//Status.ID = udp.GetID()	

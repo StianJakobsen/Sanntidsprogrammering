@@ -18,7 +18,7 @@ func main() {
 	var Status udp.Status
 	var Data udp.Data	
 	
-	udp.UdpInit(30169, 39998, 1024, &Status, &PrimaryQ, &Data)
+	udp.UdpInit(30169, 39998, 1024, &Status, &Data)
 	//Status.ID = udp.GetID()	
 	fmt.Println("Getfloor", driver.GetFloorSensorSignal())	
 	PrintStatus(Status)
