@@ -71,7 +71,8 @@ func PrimaryListen(bconn *net.UDPConn, Data *Data) {
 		checkError(err)
 		//Data = buffer
 		err = json.Unmarshal(buffer[0:n], Data)		
-		Printf("Rcv %d bytes: %s\n",n, buffer)
+		Println("her er primaryQen:", Data.PrimaryQ)		
+		// Printf("Rcv %d bytes: %s\n",n, buffer)
 		
 		
 	}	
@@ -101,7 +102,7 @@ func PrimaryBroadcast(baddr *net.UDPAddr, Data *Data) { // data []byte
 //func SlaveUpdate(
 
 // send_ch, receive_ch chan Udp_message
-func UdpInit(localListenPort int, broadcastListenPort int, message_size int, Status *Status, PrimaryQ *[]string) (err error) {
+func UdpInit(localListenPort int, broadcastListenPort int, message_size int, Status *Status, PrimaryQ *[]string, Data *Data) (err error) {
 	buffer := make([]byte, message_size)
 	
 
@@ -146,12 +147,12 @@ func UdpInit(localListenPort int, broadcastListenPort int, message_size int, Sta
 		Println("Tar over som primary!")
 		(*Status).Primary = true
 		*PrimaryQ = append(*PrimaryQ, strconv.Itoa(Status.ID)) 
-		go PrimaryBroadcast(baddr,Status)	
+		go PrimaryBroadcast(baddr,Data)	
 	} else {
 		//*PrimaryQ = append(*PrimaryQ, string(buffer))
-		go PrimaryListen(broadcastListenConn)
+		go PrimaryListen(broadcastListenConn, Data)
 	}
-	Println("her er primaryQen:", *PrimaryQ)
+	
 
 
 	//	fmt.Printf("Generating local address: \t Network(): %s \t String(): %s \n", laddr.Network(), laddr.String())
