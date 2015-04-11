@@ -127,7 +127,7 @@ func UdpInit(localListenPort int, broadcastListenPort int, message_size int, Sta
 	if err != nil {
 		Println("Tar over som primary!")
 		(*Status).Primary = true
-		//go Send(tempConn)	
+		go Send(baddr)	
 	} else {
 		go Listen(broadcastListenConn)
 	}

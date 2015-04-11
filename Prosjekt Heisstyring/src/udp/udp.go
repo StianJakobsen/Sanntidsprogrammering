@@ -54,12 +54,12 @@ func GetID() int {
 
 func Listen(bconn *net.UDPConn) {
 	buffer := make([]byte, 1024)
-	udpAddr, err := net.ResolveUDPAddr("udp", "localhost:39998")
-	conn, err := net.ListenUDP("udp", udpAddr)
-	checkError(err)
+	//udpAddr, err := net.ResolveUDPAddr("udp", ":39998")
+	//conn, err := net.ListenUDP("udp", udpAddr)
+	//checkError(err)
 	for {
 		Println("Hører")
-		n,err := conn.Read(buffer)
+		n,err := bconn.Read(buffer)
 		checkError(err)
 		Printf("Rcv %d bytes: %s\n",n, buffer)
 	}	
