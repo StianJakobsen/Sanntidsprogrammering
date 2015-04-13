@@ -7,7 +7,7 @@ import (
 	"time"
 	"driver"
 	//"control"
-	"os"
+	//"os"
 )
 
 func GoToFloor(button int, floorChan chan int,Status *udp.Status) {
@@ -18,12 +18,12 @@ func GoToFloor(button int, floorChan chan int,Status *udp.Status) {
 	var done int
 	temp:= floor	
 	//polse:
-	for {	
+	for {	/*
 		if driver.GetStopSignal() != 0 {
 			driver.SetMotorDirection(driver.DIRN_STOP)
 			fmt.Println("Stop button pressed")			
 			os.Exit(1)	
-			}	
+			}*/	
 		select {
 		
 		case temp = <-floorChan:
@@ -36,10 +36,10 @@ func GoToFloor(button int, floorChan chan int,Status *udp.Status) {
 			//}
 
 		default:			
-			if driver.GetStopSignal() != 0 {
+			/*if driver.GetStopSignal() != 0 {
 				driver.SetMotorDirection(driver.DIRN_STOP)
 				os.Exit(1)	
-			}		
+			}		*/
 			driver.SetFloorIndicator(driver.GetFloorSensorSignal())	
 			if done == 1{
 				//fmt.Printf("GAA IN EHFE")				
@@ -118,9 +118,15 @@ func GetCommand() (int,int) {
 return -1,-1
 }
 
-
-
-
+/*
+func CostFunction(StatusList *Status, OrderList []int) {
+	for all elevators {
+		if elevator == same floor as command {
+			do nothing/open door
+		}
+	}
+	
+*/
 
 
 

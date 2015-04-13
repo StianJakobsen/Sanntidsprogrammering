@@ -12,17 +12,25 @@ import (
 
 func main() {
 	
-	fmt.Println(udp.GetID()*10)
 	runtime.GOMAXPROCS(runtime.NumCPU())
+
+	fmt.Println(udp.GetID()*10)	
 	floorChan := make(chan int)
-	var Status udp.Status
+	//var Status udp.Status
 	var Data udp.Data	
-	
-	udp.UdpInit(30169, 39998, 1024, &Status, &PrimaryQ, &Data)
+	//Data := make(map[int]udp.Status)
+	//var PrimaryQ [3]string
+
+	udp.UdpInit(30169, 39998, 1024, &Data)
 	//Status.ID = udp.GetID()	
 	fmt.Println("Getfloor", driver.GetFloorSensorSignal())	
-	PrintStatus(Status)
-	
+	//PrintStatus(Status)
+	//Data[Status.ID] = Status;
+	//Data[154] = Status;
+	//fmt.Println("Hera er Data")
+	//PrintStatus(Data[153])
+	//fmt.Println("Data hadde lengden: ", len(Data))
+
 	if driver.InitElevator() == 0 {
 		fmt.Println("Unable to initialize elevator hardware!")
 		return
@@ -39,12 +47,12 @@ func main() {
 	//	go udp.Listen()
 	//}	
 		
-	go control.GoToFloor(2,floorChan,&Status)
+	go control.GoToFloor(2,floorChan,&Data)
 	
 	for {
 		_, temp := control.GetCommand()
 		floorChan<- temp
-		PrintStatus(Status)
+		PrintStatus(Data.Status)
 		
 		if driver.GetStopSignal() != 0 {
 			driver.SetMotorDirection(driver.DIRN_STOP)

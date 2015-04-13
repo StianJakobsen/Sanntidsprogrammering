@@ -20,23 +20,22 @@ type Status struct {
 	NextFloor int
 	Primary bool
 	ID int
+	PrimaryQ [3]string
 }
 
 type Data struct {
-	//Running [3]int
-	//CurrentFloor [3]int
-	//NextFloor [3]int
-	PrimaryQ [3]string
-	
+	Status Status
+	Statuses map[int]Status
+	PrimaryQ []int
 }
 
 
-func SetStatus(Status *Status, running int, NextFloor int) {
-	(*Status).Running = running
-	(*Status).CurrentFloor = driver.GetFloorSensorSignal()
-	(*Status).NextFloor = NextFloor
-	
-	(*Status).ID = GetID()
+func SetStatus(Data *Data, running int, NextFloor int) {
+	ID := GetID()
+	(*Data).Status.Running = running
+	(*Data).Status.CurrentFloor = driver.GetFloorSensorSignal()
+	(*Data).Status.NextFloor = NextFloor
+	(*Data).Status.ID = ID
 	//Println(" id i func:", (*Status).ID)
 }
 func GetID() int {
@@ -47,7 +46,6 @@ func GetID() int {
 	}
  	var ipAddr string
 	for _, a := range addrs {
-		
 		if ipnet, ok := a.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
 			if ipnet.IP.To4() != nil {
 				ipAddr = ipnet.IP.String()
@@ -59,7 +57,7 @@ func GetID() int {
 }
 
 
-func PrimaryListen(bconn *net.UDPConn, Data *Data) {
+func PrimaryListen(bconn *net.UDPConn, Data *Data) { // Bruke chan muligens fordi den skal skrive til Data
 	buffer := make([]byte, 1024)
 	//udpAddr, err := net.ResolveUDPAddr("udp", ":39998")
 	//conn, err := net.ListenUDP("udp", udpAddr)
@@ -102,12 +100,13 @@ func PrimaryBroadcast(baddr *net.UDPAddr, Data *Data) { // data []byte
 //func SlaveUpdate(
 
 // send_ch, receive_ch chan Udp_message
-func UdpInit(localListenPort int, broadcastListenPort int, message_size int, Status *Status, Data *Data) (err error) {
+func UdpInit(localListenPort int, broadcastListenPort int, message_size int, data *Data) (err error) {
 	buffer := make([]byte, message_size)
-	
+	var temp Data
 
-	(*Status).Primary = false
-	SetStatus(Status,0,driver.GetFloorSensorSignal())	
+	//(*Status).Primary = false
+	(*data).Status.Primary = false	
+	SetStatus(data,0,driver.GetFloorSensorSignal())	
 	//InitStatus(*Status)
 	//Println("SE HER::::: ", (Status).ID)
 	
@@ -142,15 +141,17 @@ func UdpInit(localListenPort int, broadcastListenPort int, message_size int, Sta
 
 	//Setting first primary
 	broadcastListenConn.SetReadDeadline(time.Now().Add(3*time.Second))
-	_, err = broadcastListenConn.Read(buffer)
+	n, err := broadcastListenConn.Read(buffer)
 	if err != nil {
 		Println("Tar over som primary!")
-		(*Status).Primary = true
-		*Data.PrimaryQ = append(*Data.PrimaryQ, strconv.Itoa(Status.ID)) 
-		go PrimaryBroadcast(baddr,Data)	
+		(*data).Status.Primary = true
+		(*data).PrimaryQ = append((*data).PrimaryQ, GetID()) 
+		go PrimaryBroadcast(baddr,data)	
 	} else {
-		//*PrimaryQ = append(*PrimaryQ, string(buffer))
-		go PrimaryListen(broadcastListenConn, Data)
+		err = json.Unmarshal(buffer[0:n], temp)
+		(*data).PrimaryQ = temp.PrimaryQ	
+		//(*Data).PrimaryQ = append((*Data).PrimaryQ, string(buffer))
+		go PrimaryListen(broadcastListenConn, data)
 	}
 	
 
