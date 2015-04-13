@@ -141,7 +141,7 @@ func UdpInit(localListenPort int, broadcastListenPort int, message_size int, dat
 
 	//Setting first primary
 	broadcastListenConn.SetReadDeadline(time.Now().Add(3*time.Second))
-	n, err = broadcastListenConn.Read(buffer)
+	n, err := broadcastListenConn.Read(buffer)
 	if err != nil {
 		Println("Tar over som primary!")
 		(*data).Status.Primary = true

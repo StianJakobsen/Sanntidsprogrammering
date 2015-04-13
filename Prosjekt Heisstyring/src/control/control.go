@@ -75,7 +75,7 @@ func GoToFloor(button int, floorChan chan int,data *udp.Data) {
 			driver.SetMotorDirection(driver.DIRN_UP) 
 		
 			} else if floor < driver.GetFloorSensorSignal() && driver.GetFloorSensorSignal() != -1 {
-			udp.SetStatus(data,1, floor)
+			udp.SetStatus(data ,1, floor)
 			driver.SetMotorDirection(driver.DIRN_DOWN)
 			}
 

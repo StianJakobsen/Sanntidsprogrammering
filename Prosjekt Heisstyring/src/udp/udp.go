@@ -83,7 +83,7 @@ func PrimaryBroadcast(baddr *net.UDPAddr, Data *Data) { // data []byte
 	bconn, err := net.DialUDP("udp", nil, baddr)
 	checkError(err)
 	for {
-		Println("SENDER")
+		//Println("SENDER")
 		//buffer = nil
 		time.Sleep(2500*time.Millisecond)
 		

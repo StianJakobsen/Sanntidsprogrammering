@@ -14,7 +14,7 @@ func main() {
 	
 	runtime.GOMAXPROCS(runtime.NumCPU())
 
-	fmt.Println(udp.GetID()*10)	
+	fmt.Println(udp.GetID())	
 	floorChan := make(chan int)
 	//var Status udp.Status
 	var Data udp.Data	
@@ -52,9 +52,10 @@ func main() {
 	for {
 		_, temp := control.GetCommand()
 		floorChan<- temp
-		PrintStatus(Data.Status)
-		/*
-		if driver.GetStopSignal() != 0 {
+		//PrintStatus(Data.Status)
+		fmt.Println("Stop signal pressed ", driver.GetStopSignal())
+		/*if driver.GetStopSignal() != 0 {
+			fmt.Println("Stop signal pressed ", driver.GetStopSignal())			
 			driver.SetMotorDirection(driver.DIRN_STOP)
 			break
 		}

@@ -10,7 +10,7 @@ import (
 	//"os"
 )
 
-func GoToFloor(button int, floorChan chan int,Status *udp.Status) {
+func GoToFloor(button int, floorChan chan int,data *udp.Data) {
 	floor := <-floorChan
 	if driver.GetFloorSensorSignal() == -1 {
 		driver.SetMotorDirection(driver.DIRN_DOWN)
@@ -55,7 +55,7 @@ func GoToFloor(button int, floorChan chan int,Status *udp.Status) {
 			if floor == driver.GetFloorSensorSignal()  {
 				
 				fmt.Println("Framme på:", floor)
-				udp.SetStatus(Status,0,floor)
+				udp.SetStatus(data,0,floor)
 
 				driver.SetDoorOpenLamp(true)				
 				driver.SetMotorDirection(driver.DIRN_STOP)
@@ -71,11 +71,11 @@ func GoToFloor(button int, floorChan chan int,Status *udp.Status) {
 				break
 		
 			} else if floor > driver.GetFloorSensorSignal() && driver.GetFloorSensorSignal() != -1 {
-			udp.SetStatus(Status,2, floor)
+			udp.SetStatus(data,2, floor)
 			driver.SetMotorDirection(driver.DIRN_UP) 
 		
 			} else if floor < driver.GetFloorSensorSignal() && driver.GetFloorSensorSignal() != -1 {
-			udp.SetStatus(Status,1, floor)
+			udp.SetStatus(data,1, floor)
 			driver.SetMotorDirection(driver.DIRN_DOWN)
 			}
 
