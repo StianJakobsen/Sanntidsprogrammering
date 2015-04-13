@@ -52,7 +52,7 @@ func main() {
 	for {
 		_, temp := control.GetCommand()
 		floorChan<- temp
-		PrintStatus(Data.Status)
+		//PrintStatus(Data.Status)
 		fmt.Println("Stop signal pressed ", driver.GetStopSignal())
 		/*if driver.GetStopSignal() != 0 {
 			fmt.Println("Stop signal pressed ", driver.GetStopSignal())			

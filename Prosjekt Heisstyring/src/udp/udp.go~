@@ -1,6 +1,6 @@
 // go run networkUDP.go
 package udp
-import (. "fmt" // Using '.' to avoid prefixing functions with their package names
+import (."fmt" // Using '.' to avoid prefixing functions with their package names
 		// This is probably not a good idea for large projects...
 	//"runtime"
 	"time"
@@ -25,7 +25,7 @@ type Status struct {
 
 type Data struct {
 	Status Status
-	Statuses map[int]Status
+	Statuses map[int]Status // Oppdatere den her å i UdpInit()
 	PrimaryQ []int
 }
 
@@ -57,7 +57,43 @@ func GetID() int {
 }
 
 
-func PrimaryListen(bconn *net.UDPConn, Data *Data) { // Bruke chan muligens fordi den skal skrive til Data
+/////////// Primary funksjonar ////////////
+
+func PrimaryBroadcast(baddr *net.UDPAddr, Data *Data) { // data []byte
+	//udpAddr, err := net.ResolveUDPAddr("udp", "129.241.187.255:39998")
+	//checkError(err)
+	bconn, err := net.DialUDP("udp", nil, baddr)
+	checkError(err)
+	for {
+		Println("SENDER")
+		time.Sleep(2500*time.Millisecond)
+		
+		// WRITE
+		b,_ := json.Marshal(Data)
+		bconn.Write(b)
+		
+		checkError(err)
+	}
+
+}
+
+func PrimaryListen(data *Data) {
+	var temp Data
+	udpAddr, err := net.ResolveUDPAddr("udp", ":39998")
+	conn, err := net.ListenUDP("udp", udpAddr)
+	checkError(err)
+	for {		
+		n, err := bconn.Read(buffer)
+		checkError(err)
+		//Data = buffer
+		err = json.Unmarshal(buffer[0:n], temp)		
+		(*data).Statuses[(*data).Status.ID] = (*data).Status // Oppdaterar mottatt status hos primary 
+	}
+}
+
+/////////// Slave functions //////////// 
+
+func ListenForPrimary(bconn *net.UDPConn, Data *Data) { // Bruke chan muligens fordi den skal skrive til Data
 	buffer := make([]byte, 1024)
 	//udpAddr, err := net.ResolveUDPAddr("udp", ":39998")
 	//conn, err := net.ListenUDP("udp", udpAddr)
@@ -70,34 +106,25 @@ func PrimaryListen(bconn *net.UDPConn, Data *Data) { // Bruke chan muligens ford
 		//Data = buffer
 		err = json.Unmarshal(buffer[0:n], Data)		
 		Println("her er primaryQen:", Data.PrimaryQ)		
-		// Printf("Rcv %d bytes: %s\n",n, buffer)
-		
-		
+		// Printf("Rcv %d bytes: %s\n",n, buffer)	
 	}	
 }
 
 
-func PrimaryBroadcast(baddr *net.UDPAddr, Data *Data) { // data []byte
-	//udpAddr, err := net.ResolveUDPAddr("udp", "129.241.187.255:39998")
-	//checkError(err)
-	bconn, err := net.DialUDP("udp", nil, baddr)
+
+func SlaveUpdate(data *Data) { // chan muligens, bare oppdatere når det er endringar
+	udpAddr, err := net.ResolveUDPAddr("udp", "129.241.187."+ strconv.Itoa((*data).PrimaryQ[0]) + ":39998")
+	conn, err := net.DialUDP("udp",nil, udpAddr)
 	checkError(err)
 	for {
-		Println("SENDER")
-		//buffer = nil
-		time.Sleep(2500*time.Millisecond)
-		
+		time.Sleep(2500*time.Millisecond) // bytte til bare ved endringar etterhvert
+
 		// WRITE
-		//Println("Er du der server??")
 		b,_ := json.Marshal(Data)
-		bconn.Write(b) // \x00
-		
+		bconn.Write(b)	
 		checkError(err)
 	}
-
 }
-
-//func SlaveUpdate(
 
 // send_ch, receive_ch chan Udp_message
 func UdpInit(localListenPort int, broadcastListenPort int, message_size int, data *Data) (err error) {
@@ -146,12 +173,14 @@ func UdpInit(localListenPort int, broadcastListenPort int, message_size int, dat
 		Println("Tar over som primary!")
 		(*data).Status.Primary = true
 		(*data).PrimaryQ = append((*data).PrimaryQ, GetID()) 
-		go PrimaryBroadcast(baddr,data)	
+		go PrimaryBroadcast(baddr,data)
+		//go PrimaryListen()	
 	} else {
 		err = json.Unmarshal(buffer[0:n], temp)
 		(*data).PrimaryQ = temp.PrimaryQ	
 		//(*Data).PrimaryQ = append((*Data).PrimaryQ, string(buffer))
-		go PrimaryListen(broadcastListenConn, data)
+		go ListenForPrimary(broadcastListenConn, data)
+		go SlaveUpdate(data)
 	}
 	
 
