@@ -24,12 +24,7 @@ func main() {
 	udp.UdpInit(30169, 39998, 1024, &Data)
 	//Status.ID = udp.GetID()	
 	fmt.Println("Getfloor", driver.GetFloorSensorSignal())	
-	//PrintStatus(Status)
-	//Data[Status.ID] = Status;
-	//Data[154] = Status;
-	//fmt.Println("Hera er Data")
-	//PrintStatus(Data[153])
-	//fmt.Println("Data hadde lengden: ", len(Data))
+
 
 	if driver.InitElevator() == 0 {
 		fmt.Println("Unable to initialize elevator hardware!")
@@ -54,12 +49,12 @@ func main() {
 		floorChan<- temp
 		//PrintStatus(Data.Status)
 		fmt.Println("Stop signal pressed ", driver.GetStopSignal())
-		/*if driver.GetStopSignal() != 0 {
+		if driver.GetStopSignal() != 0 {
 			fmt.Println("Stop signal pressed ", driver.GetStopSignal())			
 			driver.SetMotorDirection(driver.DIRN_STOP)
 			break
 		}
-	*/
+	
 	}
 }		 
 

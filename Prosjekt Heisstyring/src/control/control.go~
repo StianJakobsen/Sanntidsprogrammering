@@ -70,7 +70,7 @@ func GoToFloor(button int, floorChan chan int,data *udp.Data) {
 				//fmt.Println("Done: %d", done)
 				break
 		
-			} else if floor > driver.GetFloorSensorSignal() && driver.GetFloorSensorSignal() != -1 && floor != -1  &&  1!= 0 {
+			} else if floor > driver.GetFloorSensorSignal() && driver.GetFloorSensorSignal() != -1 && floor != -1 {   
 			udp.SetStatus(data,2, floor)
 			driver.SetMotorDirection(driver.DIRN_UP) 
 		
@@ -118,15 +118,19 @@ func GetCommand() (int,int) {
 return -1,-1
 }
 
-/*
-func CostFunction(StatusList *Status, OrderList []int) {
-	for all elevators {
-		if elevator == same floor as command {
-			do nothing/open door
+
+func CostFunction(data *udp.Data, OrderList []int) {
+	for i := 0; i < len(data.PrimaryQ); i++ {
+		for j := 0; j<len(data.PrimaryQ); j++ {
+			if OrderList[j] == data.Statuses[data.PrimaryQ[i]].CurrentFloor {
+				OrderList = OrderList[1:len(OrderList)]
+				break
+			}
 		}
 	}
+}
 	
-*/
+
 
 
 

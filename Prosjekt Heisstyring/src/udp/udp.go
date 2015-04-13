@@ -1,4 +1,4 @@
-// go run networkUDP.go
+// go run networkUDP.cd ..go
 package udp
 import (."fmt" // Using '.' to avoid prefixing functions with their package names
 		// This is probably not a good idea for large projects...
@@ -21,12 +21,15 @@ type Status struct {
 	Primary bool
 	ID int
 	PrimaryQ [3]string
+	CommandList [4]int
+	UpDownList [6]int  // slice = slice[:0] for å tømme slicen
 }
 
 type Data struct {
 	Status Status
 	Statuses map[int]Status // Oppdatere den her å i UdpInit()
 	PrimaryQ []int
+	OrderList []int
 }
 
 
@@ -57,7 +60,7 @@ func GetID() int {
 }
 
 
-/////////// Primary funksjonar ////////////
+/////////// Primary functions ////////////
 
 func PrimaryBroadcast(baddr *net.UDPAddr, Data *Data) { // data []byte
 	//udpAddr, err := net.ResolveUDPAddr("udp", "129.241.187.255:39998")
@@ -84,7 +87,7 @@ func PrimaryListen(data *Data) {
 	conn, err := net.ListenUDP("udp", udpAddr)
 	checkError(err)
 	for {		
-		n, err := bconn.Read(buffer)
+		n, err := conn.Read(buffer)
 		checkError(err)
 		//Data = buffer
 		err = json.Unmarshal(buffer[0:n], temp)		
@@ -120,9 +123,9 @@ func SlaveUpdate(data *Data) { // chan muligens, bare oppdatere når det er endr
 	for {
 		time.Sleep(2500*time.Millisecond) // bytte til bare ved endringar etterhvert
 
-		// WRITE
-		b,_ := json.Marshal(Data)
-		bconn.Write(b)	
+		 //WRITE
+		b,_ := json.Marshal(data)
+		conn.Write(b)	
 		checkError(err)
 	}
 }

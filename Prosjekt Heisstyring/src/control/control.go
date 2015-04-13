@@ -118,15 +118,19 @@ func GetCommand() (int,int) {
 return -1,-1
 }
 
-/*
-func CostFunction(StatusList *Status, OrderList []int) {
-	for all elevators {
-		if elevator == same floor as command {
-			do nothing/open door
+
+func CostFunction(data *udp.Data, OrderList []int) {
+	for i := 0; i < len(data.PrimaryQ); i++ {
+		for j := 0; j<len(data.PrimaryQ); j++ {
+			if OrderList[j] == data.Statuses[data.PrimaryQ[i]].CurrentFloor {
+				OrderList = OrderList[1:len(OrderList)]
+				break
+			}
 		}
 	}
+}
 	
-*/
+
 
 
 
