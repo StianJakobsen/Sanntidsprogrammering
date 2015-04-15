@@ -20,7 +20,15 @@ func main() {
 	var Data udp.Data	
 	//Data := make(map[int]udp.Status)
 	//var PrimaryQ [3]string
-
+	temp:=make([]int,5)
+	temp[0] =3
+	temp[1] =2
+	temp[2] =1
+	temp[3] =2
+	temp[4] =1
+	fmt.Println(temp)
+	temp = temp+temp
+	fmt.Println(temp)
 	udp.UdpInit(30169, 39998, 1024, &Data)
 	//Status.ID = udp.GetID()	
 	fmt.Println("Getfloor", driver.GetFloorSensorSignal())	

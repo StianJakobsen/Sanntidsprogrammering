@@ -20,16 +20,18 @@ type Status struct {
 	NextFloor int
 	Primary bool
 	ID int
-	PrimaryQ [3]string
-	CommandList [4]int
-	UpDownList [6]int  // slice = slice[:0] for å tømme slicen
+	//PrimaryQ [3]string
+	CommandList []int
+	UpList []int  // slice = slice[:0] for å tømme slicen når sendt til primary
+	DownList[]int // slice = slice[:0] for å tømme slicen når sendt til primary
+	//PriList[]int
+	OrderList []int // sjekke for nye ordrer når primary sender
 }
 
 type Data struct {
 	Status Status
 	Statuses map[int]Status // Oppdatere den her å i UdpInit()
 	PrimaryQ []int
-	OrderList []int
 }
 
 
