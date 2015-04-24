@@ -23,7 +23,7 @@ type Status struct {
 	Primary bool
 	ID int
 	//PrimaryQ [3]string
-	CommandList []int
+	//CommandList []int
 	UpList []int  // slice = slice[:0] for å tømme slicen når sendt til primary
 	DownList[]int // slice = slice[:0] for å tømme slicen når sendt til primary
 	ButtonList []int
@@ -140,7 +140,7 @@ func PrimaryListen(data *Data, SortChan chan int) {
 
 /////////// Slave functions //////////// 
 
-func ListenForPrimary(bconn *net.UDPConn, baddr *net.UDPAddr, data *Data, PrimaryChan chan int, SortChan chan int) { // Bruke chan muligens fordi den skal skrive til Data
+func ListenForPrimary(bconn *net.UDPConn, baddr *net.UDPAddr, data chan *Data, PrimaryChan chan int, SortChan chan int) { // Bruke chan muligens fordi den skal skrive til Data
 	buffer := make([]byte, 1024)
 	//udpAddr, err := net.ResolveUDPAddr("udp", ":39998")
 	//conn, err := net.ListenUDP("udp", udpAddr)
