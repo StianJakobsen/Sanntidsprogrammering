@@ -15,16 +15,14 @@ func checkError(err error) {
 	
 }
 
-func read(addr *UDPAddr) {
+func read() {
 	buffer := make([]byte, 1024)
-	conn, err := ListenUDP("udp4", addr)
+	udpAddr, err := ResolveUDPAddr("udp4", ":20001")
+	conn, err := ListenUDP("udp4", udpAddr)
 	checkError(err)
-	Println("5")
 	for {
-		buffer = nil
 		n,err := conn.Read(buffer)
 		checkError(err)
-		Println("3")
 		Printf("Rcv %d bytes: %s\n",n, buffer)
 		
 	}	
@@ -41,21 +39,21 @@ func main() {
 	checkError(err)
 	Println("2")
 	
-	go read(udpAddr)
+	go read()
 	
 	//Println(conn2)
 	//os.Exit(1)
 	for {
 		//buffer = nil
 		time.Sleep(1000*time.Millisecond)
-		//Println("Hei!")
+		Println("Hei!")
 		
 		// WRITE
 		Println("Er du der server??")
 		_, err := conn.Write([]byte("Eg er her\n")) // \x00
 		//conn.Write([]byte("Eg er her\n"))
 		checkError(err)
-		Println("4")
+		
 				
 		// READ
 		//n,err := conn.Read(buffer)
