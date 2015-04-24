@@ -79,7 +79,7 @@ func GoToFloor(button int,  floorChan chan int,data *udp.Data) {
 	}
 }
 */
-func GoToFloor(floor int, status *udp.Status, list int) {
+func GoToFloor(floor int, status *udp.Status, list int) { // Lamper for command buttons må leggas til
 	fmt.Println("control 82: går til floor floor:",floor)
 	for {
 		driver.SetFloorIndicator(driver.GetFloorSensorSignal())
@@ -110,7 +110,7 @@ func GoToFloor(floor int, status *udp.Status, list int) {
 }
 
 
-func ElevatorControl(statusIn chan *udp.Status){
+func ElevatorControl(statusIn chan *udp.Status, statusOut chan *udp.Status){
 	//time.Sleep(1*time.Second)
 	var status *udp.Status
 	temp := 0
@@ -129,7 +129,7 @@ func ElevatorControl(statusIn chan *udp.Status){
 		//}
 		if len((*status).OrderList) == 0{
 			(*status).Running = 0
-			statusIn<-status
+			statusOut<-status
 		} 
 		for i:=0;i<len((*status).ButtonList);i++ {
 			fmt.Println("ButtonList(i): ",(*status).ButtonList[i])
@@ -138,9 +138,9 @@ func ElevatorControl(statusIn chan *udp.Status){
 		}
 		//ButtonList = ButtonList[:0]
 						
-		fmt.Printf("OrderList[0]: %d CommandList[0]: %d CurrentFloor: %d ID: %d \n",(*status).OrderList[0],(*status).CommandList[0], (*status).CurrentFloor, (*status).ID)
+		fmt.Printf("OrderList[0]: %d CommandList[0]: CurrentFloor: %d ID: %d \n",(*status).OrderList[0], (*status).CurrentFloor, (*status).ID)
 		
-		if len((*status).OrderList > 0{
+		if len((*status).OrderList) > 0{
 				fmt.Println("OrderList: ", (*status).CurrentFloor)
 				// 
 				if (*status).OrderList[0] > (*status).CurrentFloor  {
@@ -159,9 +159,8 @@ func ElevatorControl(statusIn chan *udp.Status){
 				}else if 	(*status).OrderList[0] == driver.GetFloorSensorSignal() {
 						(*status).OrderList=functions.UpdateList((*status).OrderList,0)
 						GoToFloor(driver.GetFloorSensorSignal(), status,1)
-		
-		
-		/*
+				}
+				/*
 			if !((*status).OrderList[0] == -1 && (*status).CommandList[0] ==-1){
 				fmt.Println("OrderList: ", (*status).CurrentFloor)
 				// 
@@ -232,11 +231,9 @@ func ElevatorControl(statusIn chan *udp.Status){
 				}
 			}
 		*/
-		
-		
-	}
+		}	
+		}
 }	
-	
 		
 func GetDestination(status *udp.Status) { //returnerer bare button, orderlist oppdateres
 	//time.Sleep(1*time.Second)
@@ -257,7 +254,7 @@ func GetDestination(status *udp.Status) { //returnerer bare button, orderlist op
 						(*status).DownList = append((*status).DownList,floor)
 						fmt.Println("status.DownList: ", (*status).DownList)
 					}	
-				}else if driver.GetButtonSignal(2,floor) == 1 && !CheckList((*status).OrderList, floor){
+				}else if driver.GetButtonSignal(2,floor) == 1 && !functions.CheckList((*status).OrderList, floor){
 					//if (*status).Running == 0{
 					//	
 					//}
@@ -357,7 +354,7 @@ return -1,-1
 }
 */
 
-func CostFunction(inData chan *udp.Data) {
+func CostFunction(dataIn chan *udp.Data, dataOut chan *udp.Data) {
 	handled := 0
 	var DownList []int
 	var UpList []int
@@ -375,15 +372,15 @@ func CostFunction(inData chan *udp.Data) {
 		}*/
 		if len(UpList) == 0 && len(DownList) == 0{
 			if handled == 0{
-				data = <-inData
+				data = <-dataIn
 			}else{
-				inData<-data // Tømt UpList og DownList 
-				data = <-inData // Venter
+				dataOut<-data // Tømt UpList og DownList 
+				data = <-dataIn // Venter
 			}
 		}else if len(UpList) > 0 || len(DownList) > 0{
 			fmt.Printf("Could not handle all orders, will try again after recieving new.\nUpList: %v DownList: %v\n", UpList, DownList)
-			inData<-data
-			data = <-inData
+			dataOut<-data
+			data = <-dataIn
 		}
 		for k := 0; k < len((*data).PrimaryQ);k++ {
 			if udp.GetIndex((*data).PrimaryQ[k],data) != -1 {
