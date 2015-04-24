@@ -1,5 +1,13 @@
- - Full kontroll på slavene og pri list.
+ - Full kontroll på slavene og pri list/bestillingsliste.
  - Costfunction/Prioritetsfunksjon
  - Logikk for å ta over primary
 	- pri list for å ta over
  - hvordan ta backup
+
+OPPPDATER:!!!
+ - Sjekke at buttons fungerer
+ - fikse problemet med komsystem
+ - legge til commandbuttonslys
+ - primarylogikk når heiser kobles fra å på
+ - fjerne døde slaver
+ - kanskje channels?

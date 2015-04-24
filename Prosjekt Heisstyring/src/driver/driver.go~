@@ -6,7 +6,7 @@ package driver // where "driver" is the folder that contains io.go, io.c, io.h, 
 #include "io.h"
 */
 //import "C"
-
+import("fmt")
 const N_FLOORS = 4
 
 //Lights
@@ -51,7 +51,8 @@ func InitElevator() int { // sjekke denna
 		SetButtonLamp(BUTTON_COMMAND, i, 0)
 	}
 	SetStopLamp(false)
-	SetDoorOpenLamp(false) 
+	SetMotorDirection(DIRN_STOP)
+	SetDoorOpenLamp(false)
 	if GetFloorSensorSignal() != -1 {
 		SetFloorIndicator(GetFloorSensorSignal())
 	} 

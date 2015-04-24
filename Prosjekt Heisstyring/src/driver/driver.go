@@ -51,7 +51,8 @@ func InitElevator() int { // sjekke denna
 		SetButtonLamp(BUTTON_COMMAND, i, 0)
 	}
 	SetStopLamp(false)
-	SetDoorOpenLamp(false) 
+	SetMotorDirection(DIRN_STOP)
+	SetDoorOpenLamp(false)
 	if GetFloorSensorSignal() != -1 {
 		SetFloorIndicator(GetFloorSensorSignal())
 	} 

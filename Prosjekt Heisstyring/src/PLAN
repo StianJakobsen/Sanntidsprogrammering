@@ -3,3 +3,12 @@
  - Logikk for å ta over primary
 	- pri list for å ta over
  - hvordan ta backup
+
+OPPPDATER:!!!
+ - Sjekke at buttons fungerer
+ - fikse problemet med komsystem
+ - legge til commandbuttonslys
+ - primarylogikk når heiser kobles fra å på
+ - fjerne døde slaver
+ - kanskje channels? https://golang.org/doc/codewalk/sharemem/
+ - costfunction logikk og all anna logikk
