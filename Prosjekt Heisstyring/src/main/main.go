@@ -45,7 +45,7 @@ func main() {
 
 	fmt.Println("MIN INDEX ER: ", udp.GetIndex(udp.GetID(), &data))
 	
-	go control.GetDestination(&(data.Statuses[udp.GetIndex(udp.GetID(), &data)]))
+	go control.GetDestination(&data)
 	go control.ElevatorControl(&(data.Statuses[udp.GetIndex(udp.GetID(), &data)])) //statusIn, statusOut)
 	
 	if data.Statuses[udp.GetIndex(udp.GetID(), &data)].Primary {

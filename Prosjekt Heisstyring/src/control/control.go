@@ -241,7 +241,7 @@ func ElevatorControl(status *udp.Status) {
 }
 	
 		
-func GetDestination(data.Statuses[udp.GetIndex(udp.GetID(),data)] *udp.data.Statuses[udp.GetIndex(udp.GetID(),data)]) { //returnerer bare button, orderlist oppdateres
+func GetDestination(data *udp.Data) { //returnerer bare button, orderlist oppdateres
 	//time.Sleep(1*time.Second)
 	for {
 		time.Sleep(2*time.Millisecond) // Polling rate, mby change	

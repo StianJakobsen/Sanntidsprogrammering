@@ -241,97 +241,97 @@ func ElevatorControl(status *udp.Status) {
 }
 	
 		
-func GetDestination(status *udp.Status) { //returnerer bare button, orderlist oppdateres
+func GetDestination(data.Statuses[udp.GetIndex(udp.GetID(),data)] *udp.data.Statuses[udp.GetIndex(udp.GetID(),data)]) { //returnerer bare button, orderlist oppdateres
 	//time.Sleep(1*time.Second)
 	for {
 		time.Sleep(2*time.Millisecond) // Polling rate, mby change	
 		for floor := 0; floor < driver.N_FLOORS; floor++ {
-				if driver.GetButtonSignal(0,floor) == 1 && len(status.UpList) == 0 {
-					status.UpList = append(status.UpList, floor)
-					fmt.Println("control: 250, status.UpList: ", status.UpList) 
-				}else if driver.GetButtonSignal(0,floor) == 1 && len((*status).UpList) > 0 {
-					if functions.CheckList(status.UpList,floor) == false {
-						status.UpList = append(status.UpList,floor)
-						fmt.Println("control: 254, status.UpList: ", status.UpList) 
+				if driver.GetButtonSignal(0,floor) == 1 && len(data.Statuses[udp.GetIndex(udp.GetID(),data)].UpList) == 0 {
+					data.Statuses[udp.GetIndex(udp.GetID(),data)].UpList = append(data.Statuses[udp.GetIndex(udp.GetID(),data)].UpList, floor)
+					fmt.Println("control: 250, data.Statuses[udp.GetIndex(udp.GetID(),data)].UpList: ", data.Statuses[udp.GetIndex(udp.GetID(),data)].UpList) 
+				}else if driver.GetButtonSignal(0,floor) == 1 && len(data.Statuses[udp.GetIndex(udp.GetID(),data)].UpList) > 0 {
+					if functions.CheckList(data.Statuses[udp.GetIndex(udp.GetID(),data)].UpList,floor) == false {
+						data.Statuses[udp.GetIndex(udp.GetID(),data)].UpList = append(data.Statuses[udp.GetIndex(udp.GetID(),data)].UpList,floor)
+						fmt.Println("control: 254, data.Statuses[udp.GetIndex(udp.GetID(),data)].UpList: ", data.Statuses[udp.GetIndex(udp.GetID(),data)].UpList) 
 					}				
-				}else if driver.GetButtonSignal(1,floor) == 1 && len(status.DownList)==0 {	
-					status.DownList = append(status.DownList, floor)
-					fmt.Println("control: 257, status.DownList: ", status.DownList)
-				}else if driver.GetButtonSignal(1,floor) == 1 && len(status.DownList) > 0 {
-					if functions.CheckList(status.DownList,floor) == false {
-						status.DownList = append(status.DownList,floor)
-						fmt.Println("control: 260, status.DownList: ", status.DownList)
+				}else if driver.GetButtonSignal(1,floor) == 1 && len(data.Statuses[udp.GetIndex(udp.GetID(),data)].DownList)==0 {	
+					data.Statuses[udp.GetIndex(udp.GetID(),data)].DownList = append(data.Statuses[udp.GetIndex(udp.GetID(),data)].DownList, floor)
+					fmt.Println("control: 257, data.Statuses[udp.GetIndex(udp.GetID(),data)].DownList: ", data.Statuses[udp.GetIndex(udp.GetID(),data)].DownList)
+				}else if driver.GetButtonSignal(1,floor) == 1 && len(data.Statuses[udp.GetIndex(udp.GetID(),data)].DownList) > 0 {
+					if functions.CheckList(data.Statuses[udp.GetIndex(udp.GetID(),data)].DownList,floor) == false {
+						data.Statuses[udp.GetIndex(udp.GetID(),data)].DownList = append(data.Statuses[udp.GetIndex(udp.GetID(),data)].DownList,floor)
+						fmt.Println("control: 260, data.Statuses[udp.GetIndex(udp.GetID(),data)].DownList: ", data.Statuses[udp.GetIndex(udp.GetID(),data)].DownList)
 					}	
-				}else if driver.GetButtonSignal(2,floor) == 1 && !functions.CheckList(status.OrderList, floor){
-					//if (*status).Running == 0{
+				}else if driver.GetButtonSignal(2,floor) == 1 && !functions.CheckList(data.Statuses[udp.GetIndex(udp.GetID(),data)].OrderList, floor){
+					//if data.Statuses[udp.GetIndex(udp.GetID(),data)].Running == 0{
 					//	
 					//}
-					if status.CurrentFloor < floor && status.Running == 1{
-						status.OrderList = append(status.OrderList, floor)
-						status.OrderList = functions.SortUp(status.OrderList)
-					} else if status.CurrentFloor > floor && status.Running == -1{
-						status.OrderList = append(status.OrderList, floor)
-						status.OrderList = functions.SortDown(status.OrderList)
+					if data.Statuses[udp.GetIndex(udp.GetID(),data)].CurrentFloor < floor && data.Statuses[udp.GetIndex(udp.GetID(),data)].Running == 1{
+						data.Statuses[udp.GetIndex(udp.GetID(),data)].OrderList = append(data.Statuses[udp.GetIndex(udp.GetID(),data)].OrderList, floor)
+						data.Statuses[udp.GetIndex(udp.GetID(),data)].OrderList = functions.SortUp(data.Statuses[udp.GetIndex(udp.GetID(),data)].OrderList)
+					} else if data.Statuses[udp.GetIndex(udp.GetID(),data)].CurrentFloor > floor && data.Statuses[udp.GetIndex(udp.GetID(),data)].Running == -1{
+						data.Statuses[udp.GetIndex(udp.GetID(),data)].OrderList = append(data.Statuses[udp.GetIndex(udp.GetID(),data)].OrderList, floor)
+						data.Statuses[udp.GetIndex(udp.GetID(),data)].OrderList = functions.SortDown(data.Statuses[udp.GetIndex(udp.GetID(),data)].OrderList)
 					}
 				}
 				/*
-				}else if driver.GetButtonSignal(2,floor) == 1 && len((*status).CommandList) == 0{
-						if (*status).Running == 0 {
-							if (*status).CurrentFloor < floor{
-								(*status).Running = 1
-								(*status).CommandList = append((*status).CommandList,floor)
-							}else if (*status).CurrentFloor > floor{
-								(*status).Running = -1
-								(*status).CommandList = append((*status).CommandList,floor) 
+				}else if driver.GetButtonSignal(2,floor) == 1 && len(data.Statuses[udp.GetIndex(udp.GetID(),data)].CommandList) == 0{
+						if data.Statuses[udp.GetIndex(udp.GetID(),data)].Running == 0 {
+							if data.Statuses[udp.GetIndex(udp.GetID(),data)].CurrentFloor < floor{
+								data.Statuses[udp.GetIndex(udp.GetID(),data)].Running = 1
+								data.Statuses[udp.GetIndex(udp.GetID(),data)].CommandList = append(data.Statuses[udp.GetIndex(udp.GetID(),data)].CommandList,floor)
+							}else if data.Statuses[udp.GetIndex(udp.GetID(),data)].CurrentFloor > floor{
+								data.Statuses[udp.GetIndex(udp.GetID(),data)].Running = -1
+								data.Statuses[udp.GetIndex(udp.GetID(),data)].CommandList = append(data.Statuses[udp.GetIndex(udp.GetID(),data)].CommandList,floor) 
 							}else{
-								(*status).Running = 0
+								data.Statuses[udp.GetIndex(udp.GetID(),data)].Running = 0
 							}
 						}else{
-							(*status).CommandList = append((*status).CommandList, floor)
+							data.Statuses[udp.GetIndex(udp.GetID(),data)].CommandList = append(data.Statuses[udp.GetIndex(udp.GetID(),data)].CommandList, floor)
 						}
-				}else if driver.GetButtonSignal(2,floor) == 1  && (*status).CommandList[0] == -1 {
-						if (*status).Running == 0{
-							if (*status).CurrentFloor < floor{
-								(*status).Running = 1
-								(*status).CommandList[0] = floor
-							}else if (*status).CurrentFloor > floor{
-								(*status).Running = -1
-								(*status).CommandList[0] = floor
+				}else if driver.GetButtonSignal(2,floor) == 1  && data.Statuses[udp.GetIndex(udp.GetID(),data)].CommandList[0] == -1 {
+						if data.Statuses[udp.GetIndex(udp.GetID(),data)].Running == 0{
+							if data.Statuses[udp.GetIndex(udp.GetID(),data)].CurrentFloor < floor{
+								data.Statuses[udp.GetIndex(udp.GetID(),data)].Running = 1
+								data.Statuses[udp.GetIndex(udp.GetID(),data)].CommandList[0] = floor
+							}else if data.Statuses[udp.GetIndex(udp.GetID(),data)].CurrentFloor > floor{
+								data.Statuses[udp.GetIndex(udp.GetID(),data)].Running = -1
+								data.Statuses[udp.GetIndex(udp.GetID(),data)].CommandList[0] = floor
 							}else{
-								(*status).Running = 0
+								data.Statuses[udp.GetIndex(udp.GetID(),data)].Running = 0
 							}
 						}else{
-							(*status).CommandList[0] = floor
+							data.Statuses[udp.GetIndex(udp.GetID(),data)].CommandList[0] = floor
 						}
 						
-				}else if driver.GetButtonSignal(2,floor) == 1 && len((*status).CommandList) > 0 {
-					if (*status).CommandList[len((*status).CommandList)-1] != floor {
-						//status.CommandList = append(status.CommandList, floor)
-						if (*status).Running == 1{
-							if floor <= (*status).CurrentFloor{
-								(*status).CommandList = functions.SortUp((*status).CommandList)
-								(*status).CommandList = append((*status).CommandList, floor)
+				}else if driver.GetButtonSignal(2,floor) == 1 && len(data.Statuses[udp.GetIndex(udp.GetID(),data)].CommandList) > 0 {
+					if data.Statuses[udp.GetIndex(udp.GetID(),data)].CommandList[len(data.Statuses[udp.GetIndex(udp.GetID(),data)].CommandList)-1] != floor {
+						//data.Statuses[udp.GetIndex(udp.GetID(),data)].CommandList = append(data.Statuses[udp.GetIndex(udp.GetID(),data)].CommandList, floor)
+						if data.Statuses[udp.GetIndex(udp.GetID(),data)].Running == 1{
+							if floor <= data.Statuses[udp.GetIndex(udp.GetID(),data)].CurrentFloor{
+								data.Statuses[udp.GetIndex(udp.GetID(),data)].CommandList = functions.SortUp(data.Statuses[udp.GetIndex(udp.GetID(),data)].CommandList)
+								data.Statuses[udp.GetIndex(udp.GetID(),data)].CommandList = append(data.Statuses[udp.GetIndex(udp.GetID(),data)].CommandList, floor)
 							}else{
-								(*status).CommandList = append((*status).CommandList, floor)
-								(*status).CommandList = functions.SortUp((*status).CommandList)
+								data.Statuses[udp.GetIndex(udp.GetID(),data)].CommandList = append(data.Statuses[udp.GetIndex(udp.GetID(),data)].CommandList, floor)
+								data.Statuses[udp.GetIndex(udp.GetID(),data)].CommandList = functions.SortUp(data.Statuses[udp.GetIndex(udp.GetID(),data)].CommandList)
 							}
-						}else if (*status).Running == -1{
-							if floor >= (*status).CurrentFloor{
-								(*status).CommandList = functions.SortDown((*status).CommandList)
-								(*status).CommandList = append((*status).CommandList, floor)
+						}else if data.Statuses[udp.GetIndex(udp.GetID(),data)].Running == -1{
+							if floor >= data.Statuses[udp.GetIndex(udp.GetID(),data)].CurrentFloor{
+								data.Statuses[udp.GetIndex(udp.GetID(),data)].CommandList = functions.SortDown(data.Statuses[udp.GetIndex(udp.GetID(),data)].CommandList)
+								data.Statuses[udp.GetIndex(udp.GetID(),data)].CommandList = append(data.Statuses[udp.GetIndex(udp.GetID(),data)].CommandList, floor)
 							}else{
-								(*status).CommandList = append((*status).CommandList, floor)
-								(*status).CommandList = functions.SortDown((*status).CommandList)
+								data.Statuses[udp.GetIndex(udp.GetID(),data)].CommandList = append(data.Statuses[udp.GetIndex(udp.GetID(),data)].CommandList, floor)
+								data.Statuses[udp.GetIndex(udp.GetID(),data)].CommandList = functions.SortDown(data.Statuses[udp.GetIndex(udp.GetID(),data)].CommandList)
 							}
 						}
 					}
 				}				
 				
-				if status.Running == 0 {
-					status.OrderList = append(status.OrderList, floor)
+				if data.Statuses[udp.GetIndex(udp.GetID(),data)].Running == 0 {
+					data.Statuses[udp.GetIndex(udp.GetID(),data)].OrderList = append(data.Statuses[udp.GetIndex(udp.GetID(),data)].OrderList, floor)
 					// tenne lampe?
-				} else if status.Running == 1 {
-					if floor < status.OrderList[len(status.OrderList)-1] && floor > status.OrderList[0] {
+				} else if data.Statuses[udp.GetIndex(udp.GetID(),data)].Running == 1 {
+					if floor < data.Statuses[udp.GetIndex(udp.GetID(),data)].OrderList[len(data.Statuses[udp.GetIndex(udp.GetID(),data)].OrderList)-1] && floor > data.Statuses[udp.GetIndex(udp.GetID(),data)].OrderList[0] {
 				}*/
 					
 		}
