@@ -23,7 +23,10 @@ func main() {
 		
 	//floorChan := make(chan int)
 	var data udp.Data
-	dataIn, dataOut := make(chan udp.Data), make(chan udp.Data)
+	costIn, costOut := make(chan udp.Data), make(chan udp.Data)
+	primListenIn, primListenOut := make(chan udp.Data), make(chan udp.Data)
+	slaveUpdateIn, slaveUpdateOut := make(chan udp.Data), make(chan udp.Data)
+	slaveListenIn, slaveListenOut := make(chan udp.Data), make(chan udp.Data)
 	//statusIn, statusOut := make(chan *udp.Status), make(chan *udp.Status)
 	PrimaryChan := make(chan int)
 	SlaveChan := make(chan int)
@@ -33,7 +36,7 @@ func main() {
 		fmt.Println("Unable to initialize elevator hardware!")
 	return
 	}
-	udp.UdpInit(30169, 39998, 1024, &data, dataIn, dataOut, PrimaryChan,SlaveChan, SortChan)
+	udp.UdpInit(30169, 39998, 1024, &data, slaveListenIn, slaveListenOut, PrimaryChan,SlaveChan, SortChan)
 	
 	if(data.Statuses[udp.GetIndex(udp.GetID(),data)].CurrentFloor == -1){
 		control.GoToFloor(0,&data.Statuses[udp.GetIndex(udp.GetID(),data)],0)	
@@ -49,9 +52,9 @@ func main() {
 	
 	if data.Statuses[udp.GetIndex(udp.GetID(), data)].Primary {
 		fmt.Println("Setter igang PrimaryListen og Costfunction")
-		go udp.PrimaryListen(dataIn, dataOut, SortChan)
-		go control.CostFunction(dataIn, dataOut)
-		dataIn <- data
+		go udp.PrimaryListen(primListenIn, primListenOut, SortChan)
+		go control.CostFunction(costIn, costOut)
+		costIn <- data
 		fmt.Println("kommet gjennom?")
 	}
 
@@ -60,8 +63,9 @@ func main() {
 		select {
 			case <-PrimaryChan:
 				data.Statuses[udp.GetIndex(udp.GetID(), data)].Primary = true
-				go control.CostFunction(dataIn, dataOut) 
+				go control.CostFunction(costIn, costOut) 
 			case <-SlaveChan:
+				go udp.SlaveUpdate(slaveUpdateIn, slaveUpdateOut)
 				
 			case <-SortChan: // passe på å omsortere Statuses og
 				if len(data.PrimaryQ)  > 1{
@@ -70,9 +74,22 @@ func main() {
 					data.PrimaryQ = append(data.PrimaryQ, temp...)
 					fmt.Println(data.PrimaryQ)
 				}
-			case dataIn := <-dataOut:
-				fmt.Println("Er i main og har tatt imot fra????")
-				dataIn<- temp
+			case data = <-costOut:
+				fmt.Println("COSTOUT")
+				primListenIn <- data
+			
+			case data = <-primListenOut:
+				fmt.Println("PRIMLISTENOUT")
+				costIn <- data
+				
+			case data = <-slaveListenOut:
+				slaveUpdateIn <- data 
+			
+			case data = <- slaveUpdateOut:
+				slaveListenIn <- data
+			//case dataIn := <-dataOut:
+			//	fmt.Println("Er i main og har tatt imot fra????")
+				//dataIn<- temp
 				//statusIn<- &data.Statuses[udp.GetIndex(udp.GetID(), &Data)]
 				//dataIn<-
 			//case <-statusOut	

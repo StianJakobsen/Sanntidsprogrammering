@@ -361,13 +361,13 @@ return -1,-1
 }
 */
 
-func CostFunction(dataIn chan udp.Data, dataOut chan udp.Data) {
+func CostFunction(in chan udp.Data, out chan udp.Data) {
 	handled := 0
 	var DownList []int
 	var UpList []int
 	var data udp.Data
 	fmt.Println("control: 369. costfunction, Ventar her")
-	data = <-dataIn
+	data = <-in
 	fmt.Println("control: 371. costfunction, Går vidare")
 	for {
 		//fmt.Println("control 243, handled: ",handled)
@@ -382,17 +382,17 @@ func CostFunction(dataIn chan udp.Data, dataOut chan udp.Data) {
 		}*/
 		if len(UpList) == 0 && len(DownList) == 0{
 			if handled == 0{
-				dataOut<- data
-				data = <-dataIn
+				out<- data
+				data = <-in
 				fmt.Println("control: 383. Er inne i costfunction")
 			}else{
-				dataOut<-data // Tømt UpList og DownList 
-				data = <-dataIn // Venter
+				out<-data // Tømt UpList og DownList 
+				data = <-in // Venter
 			}
 		}else if len(UpList) > 0 || len(DownList) > 0{
 			fmt.Printf("Could not handle all orders, will try again after recieving new.\nUpList: %v DownList: %v\n", UpList, DownList)
-			dataOut<-data
-			data = <-dataIn
+			out<-data
+			data = <-in
 		}
 		for k := 0; k < len(data.PrimaryQ);k++ {
 			if udp.GetIndex(data.PrimaryQ[k],data) != -1 {
