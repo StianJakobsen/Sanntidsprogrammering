@@ -39,14 +39,14 @@ func main() {
 	udp.UdpInit(30169, 39998, 1024, &data, slaveListenIn, slaveListenOut, PrimaryChan,SlaveChan)
 	
 	if(data.Statuses[udp.GetIndex(udp.GetID(), &data)].CurrentFloor == -1){
-		control.GoToFloor(0,&data.Statuses[udp.GetIndex(udp.GetID(), &data)],0)	
+		control.GoToFloor(0,&data)	
 	}
 	fmt.Println("Ferdig med å initialisere")	
 
 	fmt.Println("MIN INDEX ER: ", udp.GetIndex(udp.GetID(), &data))
 	
 	go control.GetDestination(&data)
-	go control.ElevatorControl(&(data.Statuses[udp.GetIndex(udp.GetID(), &data)])) //statusIn, statusOut)
+	go control.ElevatorControl(&data) //statusIn, statusOut)
 	
 	if data.Statuses[udp.GetIndex(udp.GetID(), &data)].Primary {
 		fmt.Println("Setter igang PrimaryListen og Costfunction")
