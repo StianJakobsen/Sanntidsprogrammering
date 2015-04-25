@@ -24,6 +24,7 @@ type Status struct {
 	Primary bool
 	ID int
 	LastUpdate time.Time
+	
 	//PrimaryQ [3]string
 	//CommandList []int
 	UpList []int  // slice = slice[:0] for å tømme slicen når sendt til primary
@@ -35,6 +36,7 @@ type Status struct {
 type Data struct {
 	//Status Status
 	//Timestamp???????
+	PriBroad bool
 	ID int
 	Statuses []Status // Oppdatere den her å i UdpInit()
 	PrimaryQ []int
@@ -84,7 +86,9 @@ func GetID() int {
 /////////// Primary functions ////////////
 
 func PrimaryBroadcast(baddr *net.UDPAddr, data *Data) { // IMALIVE, oppdatere backup for alle
-	//var temp Data
+	var temp Data
+	temp = *data
+	temp.PriBroad = true
 	//udpAddr, err := net.ResolveUDPAddr("udp", "129.241.187.255:39998")
 	//checkError(err)
 	bconn, err := net.DialUDP("udp", nil, baddr)
@@ -93,7 +97,7 @@ func PrimaryBroadcast(baddr *net.UDPAddr, data *Data) { // IMALIVE, oppdatere ba
 	for {
 		fmt.Println("SENDER")
 		// WRITE
-		b,_ := json.Marshal(*data)
+		b,_ := json.Marshal(temp)
 		bconn.Write(b)
 		//json.Unmarshal(b[0:len(b)], temp) 
 		//Println("b: ", b)
@@ -105,6 +109,7 @@ func PrimaryBroadcast(baddr *net.UDPAddr, data *Data) { // IMALIVE, oppdatere ba
 }
 
 func SendOrderlist(data Data,index int) { // IMALIVE
+	data.PriBroad = false
 	udpAddr, err := net.ResolveUDPAddr("udp", "129.241.187.255:39998")//+strconv.Itoa(data.PrimaryQ[index])+":39998")
 	bconn, err := net.DialUDP("udp",nil, udpAddr)
 	checkError(err)
@@ -137,6 +142,7 @@ func PrimaryListen(in chan Data, out chan Data, SortChan chan int) {
 			if len(data.Statuses) > 1{
 				tempo[0] = data.Statuses[0]
 				tempo = append(tempo,tempData.Statuses[1:]...)
+				data.PrimaryQ = tempData.PrimaryQ
 				data.Statuses = tempo
 			}
 			out<- data
@@ -180,6 +186,7 @@ func ListenForPrimary(bconn *net.UDPConn, baddr *net.UDPAddr, in chan Data, out 
 	//conn, err := net.ListenUDP("udp", udpAddr)
 	//checkError(err)
 	var data Data
+	var temp Data
 	for {
 		data = <-in 
 		
@@ -198,11 +205,16 @@ func ListenForPrimary(bconn *net.UDPConn, baddr *net.UDPAddr, in chan Data, out 
 			break
 		}
 		//Data = buffer
-		err = json.Unmarshal(buffer[0:n], &data)
-		out<- data	
-		fmt.Println("her er primaryQen:", data.PrimaryQ)
-		fmt.Println("Her er ny OrderList: ", data.Statuses[GetIndex(GetID(),data)].OrderList)
-		fmt.Println("Index: ", GetIndex(GetID(),data))	
+		err = json.Unmarshal(buffer[0:n], &temp)
+		if(temp.PriBroad == false) {
+			data = temp	
+			fmt.Println("her er primaryQen:", data.PrimaryQ)
+			fmt.Println("Her er ny OrderList: ", data.Statuses[GetIndex(GetID(),data)].OrderList)
+			fmt.Println("Index: ", GetIndex(GetID(),data))
+		}	
+		out <- data
+		
+		
 		// Printf("Rcv %d bytes: %s\n",n, buffer)	
 	}	
 }

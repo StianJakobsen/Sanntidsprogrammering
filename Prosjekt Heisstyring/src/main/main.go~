@@ -66,6 +66,7 @@ func main() {
 				go control.CostFunction(costIn, costOut) 
 			case <-SlaveChan:
 				go udp.SlaveUpdate(slaveUpdateIn, slaveUpdateOut)
+				slaveUpdateIn <- data
 				
 			case <-SortChan: // passe på å omsortere Statuses og
 				if len(data.PrimaryQ)  > 1{
