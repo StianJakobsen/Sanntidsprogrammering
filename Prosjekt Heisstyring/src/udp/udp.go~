@@ -256,7 +256,7 @@ func SlaveUpdate(data *Data) { // chan muligens, bare oppdatere når det er endr
 }
 
 // send_ch, receive_ch chan Udp_message
-func UdpInit(localListenPort int, broadcastListenPort int, message_size int,data *Data, PrimaryChan chan int, SlaveChan chan int, SortChan chan int) (err error) {
+func UdpInit(localListenPort int, broadcastListenPort int, message_size int,data *Data, dataIn chan Data, dataOut chan Data PrimaryChan chan int, SlaveChan chan int, SortChan chan int) (err error) {
 	
 	buffer := make([]byte, message_size)
 	var status Status
@@ -326,11 +326,10 @@ func UdpInit(localListenPort int, broadcastListenPort int, message_size int,data
 		//(*Data).PrimaryQ = append((*Data).PrimaryQ, string(buffer))
 		//SlaveChan<- 1
 		go SlaveUpdate(data)		
-		go ChannelFunc(SlaveChan)		
-		
+		//go ChannelFunc(SlaveChan)		
+		go ListenForPrimary(broadcastListenConn, baddr, dataIn, dataOut, PrimaryChan, SortChan)
 		//time.Sleep(2500*time.Millisecond) // Vente for å la Primary oppdatere PrimaryQen
 		
-		//go ListenForPrimary(broadcastListenConn, baddr, dataIn, dataOut, PrimaryChan, SortChan)
 	}
 	
 
