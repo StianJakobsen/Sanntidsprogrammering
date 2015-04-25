@@ -53,7 +53,6 @@ func main() {
 		go udp.PrimaryListen(primListenIn, primListenOut)
 		go control.CostFunction(costIn, costOut)
 		costIn <- &data
-		fmt.Println("kommet gjennom?")
 	}
 
 	for {
@@ -77,11 +76,11 @@ func main() {
 				//primListenIn <- data
 			*/
 			case <-costOut:
-				fmt.Println("COSTOUT")
+				//fmt.Println("COSTOUT")
 				primListenIn <- &data
 			
 			case <-primListenOut:
-				fmt.Println("PRIMLISTENOUT")
+				//fmt.Println("PRIMLISTENOUT")
 				costIn <- &data
 				
 			case <-slaveListenOut:

@@ -109,13 +109,13 @@ func PrimaryBroadcast(baddr *net.UDPAddr, data *Data) { // IMALIVE, oppdatere ba
 }
 
 func SendOrderlist(data *Data,index int) { // IMALIVE
-	fmt.Println("Går inn og SENDER ORDRER!")
+	//fmt.Println("Går inn og SENDER ORDRER!")
 	data.PriBroad = false
 	udpAddr, err := net.ResolveUDPAddr("udp", "129.241.187.255:39998")//+strconv.Itoa(data.PrimaryQ[index])+":39998")
 	bconn, err := net.DialUDP("udp",nil, udpAddr)
 	checkError(err)
 	// WRITE
-	fmt.Println("ORderList sent: ", data.Statuses[index].OrderList)
+	fmt.Println("ORDERLIST SENT: ", data.Statuses[index].OrderList)
 	b,_ := json.Marshal(data) // nok å bare sende en gang?
 	bconn.Write(b)		
 	checkError(err)
@@ -125,9 +125,7 @@ func PrimaryListen(in chan *Data, out chan *Data) {
 	buffer := make([]byte, 1024)
 	//var tempo Status
 	//var data Data
-	fmt.Println("udp: 121. primaryListen, Ventar her")
 	data := <-in
-	fmt.Println("udp: 123. primaryListen, Går vidare")
 	out<-data
 	//updating := false
 	//var tempData Data
@@ -141,7 +139,7 @@ func PrimaryListen(in chan *Data, out chan *Data) {
 		//fmt.Println("før case data = <-in")
 		select{
 		case data = <-in:
-			fmt.Println("udp: 133. Inne i PrimaryListen")
+			//fmt.Println("udp: 133. Inne i PrimaryListen")
 			//updating = true
 			for i := 1; i < len(data.Statuses); i++{
 				data.Statuses[i] = tempData.Statuses[i]
@@ -160,7 +158,7 @@ func PrimaryListen(in chan *Data, out chan *Data) {
 			n, err := conn.Read(buffer) // Høtt skjer om den stoppar her?
 			//out<- data
 			if err == nil{
-				fmt.Println("Mottok ei melding")
+				//fmt.Println("Mottok ei melding")
 				//checkError(err)
 				//Data = buffer
 				err = json.Unmarshal(buffer[0:n], &temp)

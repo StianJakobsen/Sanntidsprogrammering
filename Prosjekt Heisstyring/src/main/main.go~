@@ -45,7 +45,7 @@ func main() {
 
 	fmt.Println("MIN INDEX ER: ", udp.GetIndex(udp.GetID(), &data))
 	
-	go control.GetDestination(&(data.Statuses[udp.GetIndex(udp.GetID(), &data)]))
+	go control.GetDestination(&data)
 	go control.ElevatorControl(&(data.Statuses[udp.GetIndex(udp.GetID(), &data)])) //statusIn, statusOut)
 	
 	if data.Statuses[udp.GetIndex(udp.GetID(), &data)].Primary {
@@ -53,7 +53,6 @@ func main() {
 		go udp.PrimaryListen(primListenIn, primListenOut)
 		go control.CostFunction(costIn, costOut)
 		costIn <- &data
-		fmt.Println("kommet gjennom?")
 	}
 
 	for {
@@ -77,11 +76,11 @@ func main() {
 				//primListenIn <- data
 			*/
 			case <-costOut:
-				fmt.Println("COSTOUT")
+				//fmt.Println("COSTOUT")
 				primListenIn <- &data
 			
 			case <-primListenOut:
-				fmt.Println("PRIMLISTENOUT")
+				//fmt.Println("PRIMLISTENOUT")
 				costIn <- &data
 				
 			case <-slaveListenOut:
