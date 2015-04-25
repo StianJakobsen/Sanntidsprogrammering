@@ -363,7 +363,7 @@ func UdpInit(localListenPort int, broadcastListenPort int, message_size int, dat
 		go ChannelFunc(SlaveChan)
 		//SlaveUpdate(data)				
 		go ListenForPrimary(broadcastListenConn, baddr, slaveListenIn, slaveListenOut, PrimaryChan)
-		//time.Sleep(2500*time.Millisecond) // Vente for å la Primary oppdatere PrimaryQen
+		time.Sleep(2500*time.Millisecond) // Vente for å la Primary oppdatere PrimaryQen
 		
 	}
 	
