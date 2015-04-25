@@ -115,7 +115,8 @@ func SendOrderlist(data *Data,index int) { // IMALIVE
 	bconn, err := net.DialUDP("udp",nil, udpAddr)
 	checkError(err)
 	// WRITE
-	fmt.Println("ORDERLIST SENT: ", data.Statuses[index].OrderList)
+	fmt.Print("ORDERLIST SENT: ", data.Statuses[index].OrderList)
+	fmt.Println("                                  PrimeryQ: ", data.PrimaryQ)
 	b,_ := json.Marshal(data) // nok å bare sende en gang?
 	bconn.Write(b)		
 	checkError(err)
