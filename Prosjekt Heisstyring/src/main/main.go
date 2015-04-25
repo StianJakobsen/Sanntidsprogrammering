@@ -10,7 +10,7 @@ import (
 	//"net"
 	//"os"
 	//"sort"
-	"functions"
+	//"functions"
 )
 
 
@@ -30,13 +30,13 @@ func main() {
 	//statusIn, statusOut := make(chan *udp.Status), make(chan *udp.Status)
 	PrimaryChan := make(chan int)
 	SlaveChan := make(chan int)
-	SortChan := make(chan int)
+	//SortChan := make(chan int)
 	
 	if driver.InitElevator() == 0 {
 		fmt.Println("Unable to initialize elevator hardware!")
 	return
 	}
-	udp.UdpInit(30169, 39998, 1024, &data, slaveListenIn, slaveListenOut, PrimaryChan,SlaveChan, SortChan)
+	udp.UdpInit(30169, 39998, 1024, &data, slaveListenIn, slaveListenOut, PrimaryChan,SlaveChan)
 	
 	if(data.Statuses[udp.GetIndex(udp.GetID(), &data)].CurrentFloor == -1){
 		control.GoToFloor(0,&data.Statuses[udp.GetIndex(udp.GetID(), &data)],0)	
@@ -50,14 +50,14 @@ func main() {
 	
 	if data.Statuses[udp.GetIndex(udp.GetID(), &data)].Primary {
 		fmt.Println("Setter igang PrimaryListen og Costfunction")
-		go udp.PrimaryListen(primListenIn, primListenOut, SortChan)
+		go udp.PrimaryListen(primListenIn, primListenOut)
 		go control.CostFunction(costIn, costOut)
 		costIn <- &data
 		fmt.Println("kommet gjennom?")
 	}
 
 	for {
-		fmt.Println("Uplist?: ", data.Statuses[0].UpList)
+		//fmt.Println("Uplist?: ", data.Statuses[0].UpList)
 		select {
 			case <-PrimaryChan:
 				data.Statuses[udp.GetIndex(udp.GetID(), &data)].Primary = true
@@ -65,7 +65,7 @@ func main() {
 			case <-SlaveChan:
 				go udp.SlaveUpdate(slaveUpdateIn, slaveUpdateOut)
 				slaveUpdateIn <- &data
-				
+			/*	
 			case <-SortChan: // passe på å omsortere Statuses og
 				if len(data.PrimaryQ)  > 1{
 					temp := functions.SortUp(data.PrimaryQ[1:])
@@ -75,6 +75,7 @@ func main() {
 				}
 				fmt.Println("La til nytt element i PrimaryQ: ", data.PrimaryQ)
 				//primListenIn <- data
+			*/
 			case <-costOut:
 				fmt.Println("COSTOUT")
 				primListenIn <- &data

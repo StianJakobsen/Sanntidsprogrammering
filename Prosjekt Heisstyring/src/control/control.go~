@@ -165,7 +165,77 @@ func ElevatorControl(status *udp.Status) {
 						status.OrderList=functions.UpdateList(status.OrderList,0)
 						GoToFloor(driver.GetFloorSensorSignal(), status,1)
 				}
-
+				/*
+			if !((*status).OrderList[0] == -1 && (*status).CommandList[0] ==-1){
+				fmt.Println("OrderList: ", (*status).CurrentFloor)
+				// 
+				if (*status).OrderList[0] > (*status).CurrentFloor  {
+					//status.Running =1
+					//fmt.Println(data.Statuses[udp.GetIndex(data.PrimaryQ[i], data)].OrderList)
+					// Sjekker om heisens ordreliste
+					if (*status).CommandList[0] == -1{
+						temp = (*status).OrderList[0]
+						(*status).OrderList = functions.UpdateList((*status).OrderList,0)
+						
+						GoToFloor(temp, status,1)
+						temp = 0
+					}else if (*status).OrderList[0] == -1{
+						temp = (*status).CommandList[0]
+						(*status).CommandList = functions.UpdateList((*status).CommandList,0)
+						GoToFloor(temp, status,0)
+						temp = 0
+					}else if (*status).OrderList[0]>(*status).CommandList[0]{
+						temp = (*status).CommandList[0]
+						(*status).CommandList = functions.UpdateList((*status).CommandList,0)	
+						GoToFloor(temp, status,0)
+						temp = 0
+					}else if (*status).CommandList[0]>(*status).OrderList[0]{
+						temp = (*status).OrderList[0]
+						(*status).OrderList = functions.UpdateList((*status).OrderList,0)
+						GoToFloor(temp, status,1)
+						temp = 0
+					}else if (*status).OrderList[0] == (*status).CommandList[0]{
+						temp = (*status).OrderList[0]
+						(*status).CommandList=functions.UpdateList((*status).CommandList,0)
+						(*status).OrderList=functions.UpdateList((*status).OrderList,0)
+						GoToFloor(temp, status,1)
+						temp = 0
+					}
+				}else if (*status).OrderList[0] < (*status).CurrentFloor{
+					//status.Running = -1
+					if (*status).CommandList[0] == -1 {
+						temp = (*status).OrderList[0]
+						(*status).OrderList = functions.UpdateList((*status).OrderList,0)
+						GoToFloor(temp, status,1)
+						temp = 0
+					}else if (*status).OrderList[0] == -1 {
+						temp = (*status).CommandList[0] 
+						(*status).CommandList = functions.UpdateList((*status).CommandList,0)
+						GoToFloor(temp, status,0)
+						temp = 0
+					}else if (*status).OrderList[0] < (*status).CommandList[0]{
+						temp = (*status).CommandList[0]
+						(*status).CommandList = functions.UpdateList((*status).CommandList,0)
+						GoToFloor(temp, status,0)
+						temp = 0
+					}else if (*status).CommandList[0] < (*status).OrderList[0]{
+						temp = (*status).OrderList[0]
+						(*status).OrderList = functions.UpdateList((*status).OrderList,0)
+						GoToFloor(temp, status,1)
+						temp = 0
+					}else if (*status).OrderList[0] == (*status).CommandList[0]{
+						temp = (*status).OrderList[0]
+						(*status).CommandList=functions.UpdateList((*status).CommandList,0)
+						(*status).OrderList=functions.UpdateList((*status).OrderList,0)
+						GoToFloor(temp, status,1)
+						temp = 0						
+					}						
+				}else if 	(*status).OrderList[0] == driver.GetFloorSensorSignal() {
+						(*status).OrderList=functions.UpdateList((*status).OrderList,0)
+						GoToFloor(driver.GetFloorSensorSignal(), status,1)						
+				}
+			}
+		*/
 		}	
 	}
 }
