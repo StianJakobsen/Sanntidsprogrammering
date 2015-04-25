@@ -23,10 +23,10 @@ func main() {
 		
 	//floorChan := make(chan int)
 	var data udp.Data
-	costIn, costOut := make(chan udp.Data), make(chan udp.Data)
-	primListenIn, primListenOut := make(chan udp.Data), make(chan udp.Data)
-	slaveUpdateIn, slaveUpdateOut := make(chan udp.Data), make(chan udp.Data)
-	slaveListenIn, slaveListenOut := make(chan udp.Data), make(chan udp.Data)
+	costIn, costOut := make(chan *udp.Data), make(chan *udp.Data)
+	primListenIn, primListenOut := make(chan *udp.Data), make(chan *udp.Data)
+	slaveUpdateIn, slaveUpdateOut := make(chan *udp.Data), make(chan *udp.Data)
+	slaveListenIn, slaveListenOut := make(chan *udp.Data), make(chan *udp.Data)
 	//statusIn, statusOut := make(chan *udp.Status), make(chan *udp.Status)
 	PrimaryChan := make(chan int)
 	SlaveChan := make(chan int)
@@ -38,35 +38,33 @@ func main() {
 	}
 	udp.UdpInit(30169, 39998, 1024, &data, slaveListenIn, slaveListenOut, PrimaryChan,SlaveChan, SortChan)
 	
-	if(data.Statuses[udp.GetIndex(udp.GetID(),data)].CurrentFloor == -1){
-		control.GoToFloor(0,&data.Statuses[udp.GetIndex(udp.GetID(),data)],0)	
+	if(data.Statuses[udp.GetIndex(udp.GetID(), &data)].CurrentFloor == -1){
+		control.GoToFloor(0,&data.Statuses[udp.GetIndex(udp.GetID(), &data)],0)	
 	}
 	fmt.Println("Ferdig med å initialisere")	
 
-	fmt.Println("MIN INDEX ER: ", udp.GetIndex(udp.GetID(),data))
+	fmt.Println("MIN INDEX ER: ", udp.GetIndex(udp.GetID(), &data))
 	
-	go control.GetDestination(&(data.Statuses[udp.GetIndex(udp.GetID(),data)]))
-	go control.ElevatorControl(&(data.Statuses[udp.GetIndex(udp.GetID(), data)])) //statusIn, statusOut)
+	go control.GetDestination(&(data.Statuses[udp.GetIndex(udp.GetID(), &data)]))
+	go control.ElevatorControl(&(data.Statuses[udp.GetIndex(udp.GetID(), &data)])) //statusIn, statusOut)
 	
-	fmt.Println("index fra main: ", udp.GetIndex(udp.GetID(), data))
-	
-	if data.Statuses[udp.GetIndex(udp.GetID(), data)].Primary {
+	if data.Statuses[udp.GetIndex(udp.GetID(), &data)].Primary {
 		fmt.Println("Setter igang PrimaryListen og Costfunction")
 		go udp.PrimaryListen(primListenIn, primListenOut, SortChan)
 		go control.CostFunction(costIn, costOut)
-		costIn <- data
+		costIn <- &data
 		fmt.Println("kommet gjennom?")
 	}
 
 	for {
-		fmt.Println("for loop")
+		fmt.Println("Uplist?: ", data.Statuses[0].UpList)
 		select {
 			case <-PrimaryChan:
-				data.Statuses[udp.GetIndex(udp.GetID(), data)].Primary = true
+				data.Statuses[udp.GetIndex(udp.GetID(), &data)].Primary = true
 				go control.CostFunction(costIn, costOut) 
 			case <-SlaveChan:
 				go udp.SlaveUpdate(slaveUpdateIn, slaveUpdateOut)
-				slaveUpdateIn <- data
+				slaveUpdateIn <- &data
 				
 			case <-SortChan: // passe på å omsortere Statuses og
 				if len(data.PrimaryQ)  > 1{
@@ -75,19 +73,21 @@ func main() {
 					data.PrimaryQ = append(data.PrimaryQ, temp...)
 					fmt.Println(data.PrimaryQ)
 				}
-			case data = <-costOut:
+				fmt.Println("La til nytt element i PrimaryQ: ", data.PrimaryQ)
+				//primListenIn <- data
+			case <-costOut:
 				fmt.Println("COSTOUT")
-				primListenIn <- data
+				primListenIn <- &data
 			
-			case data = <-primListenOut:
+			case <-primListenOut:
 				fmt.Println("PRIMLISTENOUT")
-				costIn <- data
+				costIn <- &data
 				
-			case data = <-slaveListenOut:
-				slaveUpdateIn <- data 
+			case <-slaveListenOut:
+				slaveUpdateIn <- &data 
 			
-			case data = <- slaveUpdateOut:
-				slaveListenIn <- data
+			case <- slaveUpdateOut:
+				slaveListenIn <- &data
 			//case dataIn := <-dataOut:
 			//	fmt.Println("Er i main og har tatt imot fra????")
 				//dataIn<- temp
