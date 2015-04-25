@@ -103,24 +103,27 @@ func PrimaryBroadcast(baddr *net.UDPAddr, data *Data) { // IMALIVE, oppdatere ba
 
 }
 
-func SendOrderlist(data *Data,index int) { // IMALIVE
+func SendOrderlist(data Data,index int) { // IMALIVE
 	udpAddr, err := net.ResolveUDPAddr("udp", "129.241.187.255:39998")//+strconv.Itoa(data.PrimaryQ[index])+":39998")
 	bconn, err := net.DialUDP("udp",nil, udpAddr)
 	checkError(err)
 	// WRITE
 	fmt.Println("ORderList sent: ", data.Statuses[index].OrderList)
-	b,_ := json.Marshal(*data) // nok å bare sende en gang?
+	b,_ := json.Marshal(data) // nok å bare sende en gang?
 	bconn.Write(b)		
 	checkError(err)
 }
 
-func PrimaryListen(dataIn chan *Data, dataOut chan *Data, SortChan chan int) {
+func PrimaryListen(dataIn chan Data, dataOut chan Data, SortChan chan int) {
 	buffer := make([]byte, 1024)
-	var data *Data
-	data = <-dataIn
+	tempo :=make([]Status,1)
+	//var data Data
+	fmt.Println("udp: 121. primaryListen, Ventar her")
+	data := <-dataIn
+	fmt.Println("udp: 123. primaryListen, Går vidare")
 	dataOut<-data
-	var tempData Data
-	tempData = *data
+	//var tempData Data
+	tempData := data
 	var temp Data
 	tempData.ID = GetID()
 	udpAddr, err := net.ResolveUDPAddr("udp", ":39999")
@@ -129,16 +132,21 @@ func PrimaryListen(dataIn chan *Data, dataOut chan *Data, SortChan chan int) {
 	for {	
 		select{
 		case data = <-dataIn:
-			*data = tempData
+			fmt.Println("udp: 133. Inne i PrimaryListen")
+			if len(data.Statuses) > 1{
+				tempo[0] = data.Statuses[0]
+				tempo = append(tempo,tempData.Statuses[1:]...)
+				data.Statuses = tempo
+			}
 			dataOut<- data
 		default:
 			//Println("HØRER")	
-			n, err := conn.Read(buffer)
+			n, err := conn.Read(buffer) // Høtt skjer om den stoppar her?
 			checkError(err)
 			//Data = buffer
 			err = json.Unmarshal(buffer[0:n], &temp)
-			if functions.CheckList((*data).PrimaryQ,temp.ID)==false {
-				tempData.Statuses = append(tempData.Statuses, temp.Statuses[GetIndex(temp.ID, &temp)])
+			if functions.CheckList(data.PrimaryQ,temp.ID)==false {
+				tempData.Statuses = append(tempData.Statuses, temp.Statuses[GetIndex(temp.ID, temp)])
 				tempData.PrimaryQ = append(tempData.PrimaryQ, temp.PrimaryQ[1:]...) //PrimaryQ[1:]...)
 				SortChan<- 1	
 			}else{
@@ -148,26 +156,40 @@ func PrimaryListen(dataIn chan *Data, dataOut chan *Data, SortChan chan int) {
 		}
 	}
 }
-
+func CleanDeadSlaves(data Data){ // FIX
+	for{
+		data.Statuses[0].LastUpdate = time.Now()
+		time.Sleep(3*time.Second)
+		fmt.Println("Lendgen til primaryq i cleandeadslaves: ",len(data.PrimaryQ))
+		for i:=1;i<len(data.PrimaryQ);i++{
+			fmt.Println("Sjekker delay: ",functions.Delay(data.Statuses[0].LastUpdate,data.Statuses[GetIndex(data.PrimaryQ[i],data)].LastUpdate))
+			if(functions.Delay(data.Statuses[0].LastUpdate,data.Statuses[GetIndex(data.PrimaryQ[i],data)].LastUpdate)>2){
+				data.Statuses = UpdateStatusList(data.Statuses,GetIndex(data.PrimaryQ[i],data))
+				data.PrimaryQ = functions.UpdateList(data.PrimaryQ,i)
+				
+			}			
+		}		
+	}
+}
 /////////// Slave functions //////////// 
 
-func ListenForPrimary(bconn *net.UDPConn, baddr *net.UDPAddr, dataIn chan *Data, dataOut chan *Data, PrimaryChan chan int, SortChan chan int) { // Bruke chan muligens fordi den skal skrive til Data
+func ListenForPrimary(bconn *net.UDPConn, baddr *net.UDPAddr, dataIn chan Data, dataOut chan Data, PrimaryChan chan int, SortChan chan int) { // Bruke chan muligens fordi den skal skrive til Data
 	buffer := make([]byte, 1024)
 	//udpAddr, err := net.ResolveUDPAddr("udp", ":39998")
 	//conn, err := net.ListenUDP("udp", udpAddr)
 	//checkError(err)
-	var data *Data
+	var data Data
 	for {
 		data = <-dataIn 
 		
 		fmt.Println("Hører")
-		fmt.Println("Her er gammel OrderList: ", (*data).Statuses[GetIndex(GetID(),data)].OrderList)	
+		fmt.Println("Her er gammel OrderList: ", data.Statuses[GetIndex(GetID(),data)].OrderList)	
 		bconn.SetReadDeadline(time.Now().Add(5*time.Second))		
 		n, err := bconn.Read(buffer)
-		if err != nil && (*data).PrimaryQ[1] == GetID() {
+		if err != nil && data.PrimaryQ[1] == GetID() {
 			fmt.Println("Mottar ikke meldinger fra primary lenger, tar over")
-			(*data).PrimaryQ = (*data).PrimaryQ[1:] // UpdateList(data.PrimaryQ,0)
-			(*data).Statuses = (*data).Statuses[1:]
+			data.PrimaryQ = data.PrimaryQ[1:] // UpdateList(data.PrimaryQ,0)
+			data.Statuses = data.Statuses[1:]
 			//go PrimaryBroadcast(baddr, data)
 			//go PrimaryListen(data, SortChan)
 			// SendOrderlist(Data)
@@ -177,8 +199,8 @@ func ListenForPrimary(bconn *net.UDPConn, baddr *net.UDPAddr, dataIn chan *Data,
 		//Data = buffer
 		err = json.Unmarshal(buffer[0:n], data)
 		dataOut<- data	
-		fmt.Println("her er primaryQen:", (*data).PrimaryQ)
-		fmt.Println("Her er ny OrderList: ", (*data).Statuses[GetIndex(GetID(),data)].OrderList)
+		fmt.Println("her er primaryQen:", data.PrimaryQ)
+		fmt.Println("Her er ny OrderList: ", data.Statuses[GetIndex(GetID(),data)].OrderList)
 		fmt.Println("Index: ", GetIndex(GetID(),data))	
 		// Printf("Rcv %d bytes: %s\n",n, buffer)	
 	}	
@@ -210,31 +232,31 @@ func SlaveAlive(data *Data) {
 }
 */
 func SlaveUpdate(data *Data) { // chan muligens, bare oppdatere når det er endringar
-	udpAddr, err := net.ResolveUDPAddr("udp", "129.241.187."+ strconv.Itoa((*data).PrimaryQ[0]) + ":39999")
+	udpAddr, err := net.ResolveUDPAddr("udp", "129.241.187."+ strconv.Itoa(data.PrimaryQ[0]) + ":39999")
 	conn, err := net.DialUDP("udp",nil, udpAddr)
 	checkError(err)
 	for {
 		 //WRITE
-		(*data).ID = GetID()
-		fmt.Println("Data.ID før sending",(*data).ID)
-		
+		data.ID = GetID()
+		fmt.Println("Data.ID før sending",data.ID)
+		data.Statuses[GetIndex(GetID(),*data)].LastUpdate = time.Now()
 		
 		b,_ := json.Marshal(*data)
 		// Må endre detta til å bare slette når confirmation på ordre kommer, confirmation kan vere samma som lampe lista??
-		(*data).Statuses[GetIndex(GetID(), data)].UpList = (*data).Statuses[GetIndex(GetID(), data)].UpList[:0]
-		(*data).Statuses[GetIndex(GetID(),data)].DownList = (*data).Statuses[GetIndex(GetID(), data)].DownList[:0]
+		data.Statuses[GetIndex(GetID(), *data)].UpList = data.Statuses[GetIndex(GetID(), *data)].UpList[:0]
+		data.Statuses[GetIndex(GetID(), *data)].DownList = data.Statuses[GetIndex(GetID(), *data)].DownList[:0]
 		
 		conn.Write(b)	
 		checkError(err)
 		time.Sleep(150*time.Millisecond) // bytte til bare ved endringar etterhvert
-		if (*data).Statuses[GetIndex(GetID(), data)].Primary == true {
+		if data.Statuses[GetIndex(GetID(), *data)].Primary == true {
 			break
 		}
 	}
 }
 
 // send_ch, receive_ch chan Udp_message
-func UdpInit(localListenPort int, broadcastListenPort int, message_size int,data *Data, dataIn chan *Data, dataOut chan *Data, PrimaryChan chan int, SlaveChan chan int, SortChan chan int) (err error) {
+func UdpInit(localListenPort int, broadcastListenPort int, message_size int,data *Data, PrimaryChan chan int, SlaveChan chan int, SortChan chan int) (err error) {
 	
 	buffer := make([]byte, message_size)
 	var status Status
@@ -242,6 +264,7 @@ func UdpInit(localListenPort int, broadcastListenPort int, message_size int,data
 	status.Primary = false
 	//(*data).ID = GetID()	
 	SetStatus(&status,0,driver.GetFloorSensorSignal())
+
 	//InitStatus(*Status)
 	//Println("SE HER::::: ", (Status).ID)
 	
@@ -279,27 +302,27 @@ func UdpInit(localListenPort int, broadcastListenPort int, message_size int,data
 	n, err := broadcastListenConn.Read(buffer)
 	if err != nil {
 		fmt.Println("Tar over som primary!")
-		(*data).PrimaryQ = append((*data).PrimaryQ, GetID())
-		(*data).Statuses = append((*data).Statuses, status)
-		(*data).Statuses[GetIndex(GetID(), data)].Primary = true
+		data.PrimaryQ = append(data.PrimaryQ, GetID())
+		data.Statuses = append(data.Statuses, status)
+		data.Statuses[GetIndex(GetID(), *data)].Primary = true
 		//PrimaryChan <- 1
 		//go ChannelFunc(PrimaryChan)
 		go PrimaryBroadcast(baddr,data)
 		
 	} else {
 		err = json.Unmarshal(buffer[0:n], data)
-		fmt.Println("PrimaryQ før checklist: ", (*data).PrimaryQ)
-		if functions.CheckList((*data).PrimaryQ,GetID()) == false{
+		fmt.Println("PrimaryQ før checklist: ", data.PrimaryQ)
+		if functions.CheckList(data.PrimaryQ,GetID()) == false{
 			fmt.Println("Funkar checklist?")
-			(*data).PrimaryQ = append((*data).PrimaryQ, GetID())
-			(*data).Statuses = append((*data).Statuses, status)
+			data.PrimaryQ = append(data.PrimaryQ, GetID())
+			data.Statuses = append(data.Statuses, status)
 		}
 		
 		//(*data).Statuses = temp.Statuses
 		
 		//(*data).PrimaryQ[1:] = SortUp((*data).PrimaryQ[1:])
-		fmt.Println("PrimaryQ: ", (*data).PrimaryQ)
-		fmt.Println("Statuselen: ", len((*data).Statuses))
+		fmt.Println("PrimaryQ: ", data.PrimaryQ)
+		fmt.Println("Statuselen: ", len(data.Statuses))
 		//(*Data).PrimaryQ = append((*Data).PrimaryQ, string(buffer))
 		//SlaveChan<- 1
 		go SlaveUpdate(data)		
@@ -307,7 +330,7 @@ func UdpInit(localListenPort int, broadcastListenPort int, message_size int,data
 		
 		//time.Sleep(2500*time.Millisecond) // Vente for å la Primary oppdatere PrimaryQen
 		
-		go ListenForPrimary(broadcastListenConn, baddr, dataIn, dataOut, PrimaryChan, SortChan)
+		//go ListenForPrimary(broadcastListenConn, baddr, dataIn, dataOut, PrimaryChan, SortChan)
 	}
 	
 
@@ -317,9 +340,9 @@ func UdpInit(localListenPort int, broadcastListenPort int, message_size int,data
 	return err
 }
 
-func GetIndex(ID int, data *Data) int { 
-	for i:=0; i<len((*data).PrimaryQ); i++ {
-		if (*data).PrimaryQ[i] == ID {
+func GetIndex(ID int, data Data) int { 
+	for i:=0; i<len(data.PrimaryQ); i++ {
+		if data.PrimaryQ[i] == ID {
 			return i
 		}
 	}
@@ -338,6 +361,17 @@ func ChannelFunc(Channel chan int) {
 	Channel <-1
 }
 
+func UpdateStatusList(OrderList []Status, j int) []Status {
+	temp := make([]Status, len(OrderList)-1)
+	for i:= 0; i<len(OrderList);i++ {
+		if i<j {
+			temp[i] = OrderList[i]
+		} else if i>j {
+			temp[i-1] = OrderList[i]
+		}
+	}
+	return temp
+}
 /*
 func SendCommandList() { // Bare sende siste tal for simplicity
 	udpAddr, err := net.ResolveUDPAddr("udp", "129.241.187.255:30169") // Broadcast (endre ip nettverket du sitter på)

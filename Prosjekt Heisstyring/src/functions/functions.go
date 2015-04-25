@@ -1,6 +1,6 @@
 //Sanntidsprogrammering!!
 package functions
-import (//"fmt" // Using '.' to avoid prefixing functions with their package names
+import ("fmt" // Using '.' to avoid prefixing functions with their package names
 		// This is probably not a good idea for large projects...
 	//"runtime"
 	//"time"
@@ -12,7 +12,8 @@ import (//"fmt" // Using '.' to avoid prefixing functions with their package nam
 	//"sort"
 	//"encoding/json"
 	"sort"
-
+	"time"
+	"math"
 )
 
 
@@ -37,18 +38,11 @@ func UpdateList(OrderList []int, j int) []int {
 func SortUp(UpList []int)  []int{ //Sorterer listen UpList i stigende rekkefølge og fjerner like tall og -1
 	sort.Ints(UpList)
 	temp := make([]int,1)
-	var minusen int
-	if(UpList[0]==-1){
-		temp[0] = UpList[1]
-		minusen  = 2
-	}else{
-		temp[0] = UpList[0]
-		minusen = 1
-	}
+	temp[0] = UpList[0]
 	
 	
 	counter := 0
-	for i:= minusen;i<len(UpList); i++ {
+	for i:= 1;i<len(UpList); i++ {
 		if UpList[i] > temp[counter] {
 			counter ++
 			temp = append(temp,UpList[i])
@@ -69,23 +63,26 @@ func CheckList(list []int, check int) bool{ // Sjekker om listen list inneholder
 
 func SortDown(DownList []int)  []int{
 	sort.Ints(DownList)
-	var minusen int
-	temp := make([]int,1)
-	if(DownList[0]==-1){
-		minusen = 1
-	}else{
-		minusen = 0
-	}
-	temp[0] = DownList[len(DownList)-1]
-	counter := 0
-	for i:= (len(DownList)-1); i>=minusen; i-- {
-		
-		if DownList[i] < temp[counter] {
-			counter ++
-			temp = append(temp,DownList[i])
+	if(len(DownList)>0){ 
+		temp := make([]int,1)
+		fmt.Println("DownList i SortDown: ",DownList)
+		temp[0] = DownList[len(DownList)-1]
+		counter := 0
+		for i:= (len(DownList)-1); i>=1; i-- {
+			
+			if DownList[i] < temp[counter] {
+				counter ++
+				temp = append(temp,DownList[i])
+			}
 		}
+		return temp
+	}else{
+		return DownList
 	}
-	return temp
 } 
+func Delay(SlaveTime time.Time, PrimeTime time.Time) int{
+	temp := SlaveTime.Sub(PrimeTime)
+	return int(math.Floor(temp.Seconds()))
+}
 	
 
