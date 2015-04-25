@@ -38,9 +38,9 @@ func main() {
 	}
 	udp.UdpInit(30169, 39998, 1024, &data, slaveListenIn, slaveListenOut, PrimaryChan,SlaveChan)
 	
-	if(data.Statuses[udp.GetIndex(udp.GetID(), &data)].CurrentFloor == -1){
+	/*if(data.Statuses[udp.GetIndex(udp.GetID(), &data)].CurrentFloor == -1){
 		control.GoToFloor(0,&data)	
-	}
+	}*/
 	fmt.Println("Ferdig med å initialisere")	
 
 	fmt.Println("MIN INDEX ER: ", udp.GetIndex(udp.GetID(), &data))

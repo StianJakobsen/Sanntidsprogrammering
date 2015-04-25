@@ -104,10 +104,10 @@ func GoToFloor(floor int, data *udp.Data) { // Lamper for command buttons må le
 			driver.SetMotorDirection(driver.DIRN_UP) 
 		} else if floor < driver.GetFloorSensorSignal() && driver.GetFloorSensorSignal() != -1 && floor != -1{
 			driver.SetMotorDirection(driver.DIRN_DOWN)
-		}else if data.Statuses[udp.GetIndex(udp.GetID(),data)].CurrentFloor == -1{
+		}/*else if data.Statuses[udp.GetIndex(udp.GetID(),data)].CurrentFloor == -1{
 			
 			driver.SetMotorDirection(driver.DIRN_DOWN)
-		}
+		}*/
 		if driver.GetFloorSensorSignal() != -1{
 			data.Statuses[udp.GetIndex(udp.GetID(),data)].CurrentFloor = driver.GetFloorSensorSignal()
 		}	
