@@ -145,12 +145,20 @@ func PrimaryListen(in chan *Data, out chan *Data) {
 		case data = <-in:
 			//fmt.Println("udp: 133. Inne i PrimaryListen")
 			//updating = true
-			for i := 1; i < len(data.Statuses); i++{
-				data.Statuses[i] = tempData.Statuses[i]
-			}
 			if len(tempData.Statuses) > len(data.Statuses){
 				fmt.Println("Legger til nye element i statuses")
 				data.Statuses = append(data.Statuses, tempData.Statuses[len(data.Statuses):]...)
+			}else if len(tempData.Statuses) < len(data.Statuses){
+				fmt.Println("Fjerner element i statuses")
+				for i := 1; i < len(data.Statuses); i++{
+					if functions.CheckList(tempData.PrimaryQ, data.PrimaryQ[i]) == false{
+						//functions.UpdateList(data.PrimaryQ, data.PrimaryQ[i])
+						data.Statuses = UpdateStatusList(data.Statuses, GetIndex(data.PrimaryQ[i], data))
+					}
+				}
+			}
+			for i := 1; i < len(data.Statuses); i++{
+				data.Statuses[i] = tempData.Statuses[i]
 			}
 			data.PrimaryQ = tempData.PrimaryQ
 			out <- data
@@ -174,11 +182,11 @@ func PrimaryListen(in chan *Data, out chan *Data) {
 				}
 			}
 			data.Statuses[0].LastUpdate = time.Now()
-			for i:=1;i<len(data.PrimaryQ);i++{
-				fmt.Printf("Delay i heis %d: %d\n",data.PrimaryQ[i],functions.Delay(data.Statuses[0].LastUpdate,data.Statuses[GetIndex(data.PrimaryQ[i],data)].LastUpdate))
-				if(functions.Delay(data.Statuses[0].LastUpdate,data.Statuses[GetIndex(data.PrimaryQ[i],data)].LastUpdate)>5){
-					data.Statuses =  UpdateStatusList(data.Statuses,GetIndex(data.PrimaryQ[i],data))
-					data.PrimaryQ = functions.UpdateList(data.PrimaryQ,i)
+			for i:=1;i<len(tempData.PrimaryQ);i++{
+				fmt.Printf("Delay i heis %d: %d\n",tempData.PrimaryQ[i], functions.Delay(tempData.Statuses[0].LastUpdate,tempData.Statuses[GetIndex(tempData.PrimaryQ[i], &tempData)].LastUpdate))
+				if(functions.Delay(tempData.Statuses[0].LastUpdate,tempData.Statuses[GetIndex(tempData.PrimaryQ[i], &tempData)].LastUpdate)>5){
+					tempData.Statuses = UpdateStatusList(temp.Statuses,GetIndex(data.PrimaryQ[i],data))
+					tempData.PrimaryQ = functions.UpdateList(temp.PrimaryQ,i)
 				}
 			}	
 			
