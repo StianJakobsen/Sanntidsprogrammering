@@ -91,6 +91,7 @@ func PrimaryBroadcast(baddr *net.UDPAddr, data *Data) { // IMALIVE, oppdatere ba
 	checkError(err)
 	fmt.Println("BROADCASTER")
 	for {
+		fmt.Println("SENDER")
 		// WRITE
 		b,_ := json.Marshal(*data)
 		bconn.Write(b)
@@ -197,7 +198,7 @@ func ListenForPrimary(bconn *net.UDPConn, baddr *net.UDPAddr, in chan Data, out 
 			break
 		}
 		//Data = buffer
-		err = json.Unmarshal(buffer[0:n], data)
+		err = json.Unmarshal(buffer[0:n], &data)
 		out<- data	
 		fmt.Println("her er primaryQen:", data.PrimaryQ)
 		fmt.Println("Her er ny OrderList: ", data.Statuses[GetIndex(GetID(),data)].OrderList)
