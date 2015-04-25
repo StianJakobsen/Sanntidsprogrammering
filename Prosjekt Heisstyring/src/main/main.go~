@@ -75,9 +75,11 @@ func main() {
 					fmt.Println(data.PrimaryQ)
 				}
 			case data = <-costOut:
+				fmt.Println("COSTOUT")
 				primListenIn <- data
 			
 			case data = <-primListenOut:
+				fmt.Println("PRIMLISTENOUT")
 				costIn <- data
 				
 			case data = <-slaveListenOut:
