@@ -146,6 +146,9 @@ func PrimaryListen(in chan *Data, out chan *Data) {
 			for i := 1; i < len(data.Statuses); i++{
 				data.Statuses[i] = tempData.Statuses[i]
 			}
+			if len(tempData.Statuses) > len(data.Statuses){
+				data.Statuses = append(data.Statuses, tempData.Statuses[len(data.Statuses):]...)
+			}
 			data.PrimaryQ = tempData.PrimaryQ
 			out <- data
 		default:
@@ -162,7 +165,7 @@ func PrimaryListen(in chan *Data, out chan *Data) {
 				err = json.Unmarshal(buffer[0:n], &temp)
 				if functions.CheckList(tempData.PrimaryQ,temp.ID)==false {
 					tempData.Statuses = append(tempData.Statuses, temp.Statuses[GetIndex(temp.ID, &temp)])
-					tempData.PrimaryQ = append(tempData.PrimaryQ, temp.PrimaryQ[1:]...) //PrimaryQ[1:]...)
+					tempData.PrimaryQ = append(tempData.PrimaryQ, temp.PrimaryQ[len(temp.Statuses)-1]) //PrimaryQ[1:]...)
 				}else{
 					tempData.Statuses[GetIndex(temp.ID, data)] = temp.Statuses[GetIndex(temp.ID, data)]
 				}

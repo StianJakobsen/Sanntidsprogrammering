@@ -397,7 +397,7 @@ func CostFunction(in chan *udp.Data, out chan *udp.Data) {
 		}
 		for k := 0; k < len(data.PrimaryQ);k++ {
 			if udp.GetIndex(data.PrimaryQ[k],data) != -1 {
-				fmt.Println("PrimaryQ: ", data.PrimaryQ)
+				fmt.Printf("PrimaryQ: %v Lengde Statuses: %v\n", data.PrimaryQ, len(data.Statuses))
 				fmt.Println("Har den samme info om status.Uplist her: ", data.Statuses[k].UpList)
 				DownList = append(DownList,data.Statuses[udp.GetIndex(data.PrimaryQ[k], data)].DownList...)
 				data.Statuses[udp.GetIndex(data.PrimaryQ[k], data)].DownList = data.Statuses[udp.GetIndex(data.PrimaryQ[k], data)].DownList[:0]
