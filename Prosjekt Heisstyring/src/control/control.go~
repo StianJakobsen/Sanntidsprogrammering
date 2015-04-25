@@ -1,3 +1,4 @@
+//Sanntidsprogrammering!!
 package control
 
 import ( 
@@ -79,8 +80,9 @@ func GoToFloor(button int,  floorChan chan int,data *udp.Data) {
 	}
 }
 */
-func GoToFloor(floor int, status *udp.Status, list int) { // Lamper for command buttons må leggas til
+func GoToFloor(floor int, status *udp.Status, list int) { // Lamper for command buttons må leggas til, kall list noe annet
 	fmt.Println("control 82: går til floor floor:",floor)
+	fmt.Println("control 82: går til floor floor:",status.CurrentFloor)
 	for {
 		driver.SetFloorIndicator(driver.GetFloorSensorSignal())
 		if floor == driver.GetFloorSensorSignal() {
@@ -101,6 +103,8 @@ func GoToFloor(floor int, status *udp.Status, list int) { // Lamper for command 
 		} else if floor > driver.GetFloorSensorSignal() && driver.GetFloorSensorSignal() != -1 && floor != -1 {   
 			driver.SetMotorDirection(driver.DIRN_UP) 
 		} else if floor < driver.GetFloorSensorSignal() && driver.GetFloorSensorSignal() != -1 && floor != -1{
+			driver.SetMotorDirection(driver.DIRN_DOWN)
+		}else if status.CurrentFloor == -1{
 			driver.SetMotorDirection(driver.DIRN_DOWN)
 		}
 		if driver.GetFloorSensorSignal() != -1{

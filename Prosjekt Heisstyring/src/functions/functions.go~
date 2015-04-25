@@ -1,5 +1,5 @@
 package functions
-import ("fmt" // Using '.' to avoid prefixing functions with their package names
+import (//"fmt" // Using '.' to avoid prefixing functions with their package names
 		// This is probably not a good idea for large projects...
 	//"runtime"
 	//"time"
@@ -30,9 +30,7 @@ func UpdateList(OrderList []int, j int) []int {
 }
 
 
-func ChannelFunc(Channel chan int) {
-	Channel <-1
-}
+
 
 
 func SortUp(UpList []int)  []int{ //Sorterer listen UpList i stigende rekkefølge og fjerner like tall og -1

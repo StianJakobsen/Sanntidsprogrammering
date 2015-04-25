@@ -1,3 +1,4 @@
+//Sanntidsprogrammering!!
 package main
 
 import ( 
@@ -13,7 +14,7 @@ import (
 )
 
 func main() {
-	fmt.Println("FINN ET BEDRE STED FOR RUNNING=0 I DAG")
+	fmt.Println("FINN ET BEDRE STED FOR RUNNING=0 I GÅR")
 	runtime.GOMAXPROCS(runtime.NumCPU())
 
 	fmt.Println(udp.GetID())
@@ -31,6 +32,9 @@ func main() {
 	return
 	}
 	udp.UdpInit(30169, 39998, 1024, &Data, dataIn, dataOut, PrimaryChan,SlaveChan, SortChan)
+	if(Data.Statuses[udp.GetIndex(udp.GetID(),&Data)].CurrentFloor == -1){
+		control.GoToFloor(0,Data.Statuses[udp.GetIndex(udp.GetID(),&Data)],0)	
+	}
 	fmt.Println("Ferdig med å initialisere")
 	fmt.Println("Currentfloor: ", Data.Statuses[udp.GetIndex(udp.GetID(),&Data)].CurrentFloor)
 	fmt.Println("GetINDEX: ",udp.GetIndex(udp.GetID(),&Data))
@@ -50,7 +54,7 @@ func main() {
 	fmt.Println("index fra main: ", udp.GetIndex(udp.GetID(), &Data))
 	if Data.Statuses[udp.GetIndex(udp.GetID(), &Data)].Primary {
 		dataIn<- &Data
-		go PrimaryListen(dataIn, dataOut, SortChan)
+		go udp.PrimaryListen(dataIn, dataOut, SortChan)
 		go control.CostFunction(dataIn, dataOut)
 	}
 

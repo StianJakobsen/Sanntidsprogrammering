@@ -1,4 +1,5 @@
 // go run networkUDP.cd ..go
+//Sanntidsprogrammering!!
 package udp
 import ("fmt" // Using '.' to avoid prefixing functions with their package names
 		// This is probably not a good idea for large projects...
@@ -22,6 +23,7 @@ type Status struct {
 	NextFloor int
 	Primary bool
 	ID int
+	LastUpdate time.Time
 	//PrimaryQ [3]string
 	//CommandList []int
 	UpList []int  // slice = slice[:0] for å tømme slicen når sendt til primary
@@ -40,7 +42,7 @@ type Data struct {
 
 
 func SetStatus(status *Status, running int, NextFloor int) {
-	
+	(*status).LastUpdate = time.Now()
 	(*status).Running = running
 	(*status).CurrentFloor = driver.GetFloorSensorSignal()
 	(*status).NextFloor = NextFloor
@@ -233,12 +235,14 @@ func SlaveUpdate(data *Data) { // chan muligens, bare oppdatere når det er endr
 
 // send_ch, receive_ch chan Udp_message
 func UdpInit(localListenPort int, broadcastListenPort int, message_size int,data *Data, dataIn chan *Data, dataOut chan *Data, PrimaryChan chan int, SlaveChan chan int, SortChan chan int) (err error) {
+	
 	buffer := make([]byte, message_size)
 	var status Status
 	//data.Statuses = append(data.Statuses, temp)
 	status.Primary = false
 	//(*data).ID = GetID()	
-	SetStatus(&status,0,driver.GetFloorSensorSignal())	
+	SetStatus(&status,0,driver.GetFloorSensorSignal())
+
 	//InitStatus(*Status)
 	//Println("SE HER::::: ", (Status).ID)
 	
