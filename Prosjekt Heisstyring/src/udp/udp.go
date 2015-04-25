@@ -144,7 +144,7 @@ func PrimaryListen(in chan *Data, out chan *Data, SortChan chan int) {
 				data.Statuses[i] = tempData.Statuses[i]
 			}
 			data.PrimaryQ = tempData.PrimaryQ
-			out<- data
+			
 		default:
 			fmt.Println("HØRER")
 			if len(tempData.PrimaryQ) == 1{
@@ -168,7 +168,7 @@ func PrimaryListen(in chan *Data, out chan *Data, SortChan chan int) {
 			}
 			//(*data).Statuses[GetIndex((*data).Status.ID,data)] = (*data).Status // Oppdaterar mottatt status hos primary 
 		}
-		
+		out<- data
 	}
 }
 /*

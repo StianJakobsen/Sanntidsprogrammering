@@ -122,7 +122,7 @@ func SendOrderlist(data *Data,index int) { // IMALIVE
 
 func PrimaryListen(in chan *Data, out chan *Data, SortChan chan int) {
 	buffer := make([]byte, 1024)
-	tempo :=make([]Status,1)
+	//tempo :=make([]Status,1)
 	//var data Data
 	fmt.Println("udp: 121. primaryListen, Ventar her")
 	data := <-in
