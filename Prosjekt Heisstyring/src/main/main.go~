@@ -40,17 +40,14 @@ func main() {
 	}
 	fmt.Println("Ferdig med å initialisere")	
 
-
-		
-	//PrimaryChan<- 1
-	//SlaveChan<-1
 	fmt.Println("MIN INDEX ER: ", udp.GetIndex(udp.GetID(),data))
+	
 	go control.GetDestination(&(data.Statuses[udp.GetIndex(udp.GetID(),data)]))
 	go control.ElevatorControl(&(data.Statuses[udp.GetIndex(udp.GetID(), data)])) //statusIn, statusOut)
+	
 	fmt.Println("index fra main: ", udp.GetIndex(udp.GetID(), data))
+	
 	if data.Statuses[udp.GetIndex(udp.GetID(), data)].Primary {
-		
-		
 		fmt.Println("Setter igang PrimaryListen og Costfunction")
 		go udp.PrimaryListen(dataIn, dataOut, SortChan)
 		go control.CostFunction(dataIn, dataOut)
