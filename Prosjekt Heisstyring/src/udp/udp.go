@@ -181,7 +181,7 @@ func PrimaryListen(in chan *Data, out chan *Data) {
 					tempData.Statuses[GetIndex(temp.ID, data)] = temp.Statuses[GetIndex(temp.ID, data)]
 				}
 			}
-			data.Statuses[0].LastUpdate = time.Now()
+			tempData.Statuses[0].LastUpdate = time.Now()
 			for i:=1;i<len(tempData.PrimaryQ);i++{
 				fmt.Printf("Delay i heis %d: %d\n",tempData.PrimaryQ[i], functions.Delay(tempData.Statuses[0].LastUpdate,tempData.Statuses[GetIndex(tempData.PrimaryQ[i], &tempData)].LastUpdate))
 				if(functions.Delay(tempData.Statuses[0].LastUpdate,tempData.Statuses[GetIndex(tempData.PrimaryQ[i], &tempData)].LastUpdate)>5){
