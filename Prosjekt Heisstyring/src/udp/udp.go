@@ -137,6 +137,7 @@ func PrimaryListen(in chan Data, out chan Data, SortChan chan int) {
 			if len(data.Statuses) > 1{
 				tempo[0] = data.Statuses[0]
 				tempo = append(tempo,tempData.Statuses[1:]...)
+				data.PrimaryQ = tempData.PrimaryQ
 				data.Statuses = tempo
 			}
 			out<- data
