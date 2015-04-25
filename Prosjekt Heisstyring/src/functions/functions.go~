@@ -63,19 +63,22 @@ func CheckList(list []int, check int) bool{ // Sjekker om listen list inneholder
 
 func SortDown(DownList []int)  []int{
 	sort.Ints(DownList)
-	
-	temp := make([]int,1)
-	fmt.Println("DownList i SortDown: ",DownList)
-	temp[0] = DownList[len(DownList)-1]
-	counter := 0
-	for i:= (len(DownList)-1); i>=1; i-- {
-		
-		if DownList[i] < temp[counter] {
-			counter ++
-			temp = append(temp,DownList[i])
+	if(len(DownList)>0){ 
+		temp := make([]int,1)
+		fmt.Println("DownList i SortDown: ",DownList)
+		temp[0] = DownList[len(DownList)-1]
+		counter := 0
+		for i:= (len(DownList)-1); i>=1; i-- {
+			
+			if DownList[i] < temp[counter] {
+				counter ++
+				temp = append(temp,DownList[i])
+			}
 		}
+		return temp
+	}else{
+		return DownList
 	}
-	return temp
 } 
 func Delay(SlaveTime time.Time, PrimeTime time.Time) int{
 	temp := SlaveTime.Sub(PrimeTime)

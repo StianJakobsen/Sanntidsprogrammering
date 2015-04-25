@@ -14,6 +14,7 @@ import ("fmt" // Using '.' to avoid prefixing functions with their package names
 	"encoding/json"
 	//"sort"
 	"functions"
+	
 )
 
 
@@ -36,6 +37,7 @@ type Status struct {
 type Data struct {
 	//Status Status
 	//Timestamp???????
+	
 	PriBroad bool
 	ID int
 	Statuses []Status // Oppdatere den her å i UdpInit()
@@ -171,6 +173,15 @@ func PrimaryListen(in chan *Data, out chan *Data) {
 					tempData.Statuses[GetIndex(temp.ID, data)] = temp.Statuses[GetIndex(temp.ID, data)]
 				}
 			}
+			data.Statuses[0].LastUpdate = time.Now()
+			for i:=1;i<len(data.PrimaryQ);i++{
+				fmt.Printf("Delay i heis %d: %d\n",data.PrimaryQ[i],functions.Delay(data.Statuses[0].LastUpdate,data.Statuses[GetIndex(data.PrimaryQ[i],data)].LastUpdate))
+				if(functions.Delay(data.Statuses[0].LastUpdate,data.Statuses[GetIndex(data.PrimaryQ[i],data)].LastUpdate)>5){
+					data.Statuses =  UpdateStatusList(data.Statuses,GetIndex(data.PrimaryQ[i],data))
+					data.PrimaryQ = functions.UpdateList(data.PrimaryQ,i)
+				}
+			}	
+			
 			//if update == true{
 			//	out <- data
 			//	update = false
