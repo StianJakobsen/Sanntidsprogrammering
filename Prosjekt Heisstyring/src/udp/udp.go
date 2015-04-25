@@ -88,13 +88,13 @@ func GetID() int {
 func PrimaryBroadcast(baddr *net.UDPAddr, data *Data) { // IMALIVE, oppdatere backup for alle
 	var temp Data
 	temp = *data
-	temp.PriBroad = true
 	//udpAddr, err := net.ResolveUDPAddr("udp", "129.241.187.255:39998")
 	//checkError(err)
 	bconn, err := net.DialUDP("udp", nil, baddr)
 	checkError(err)
 	fmt.Println("BROADCASTER")
 	for {
+		temp.PriBroad = true
 		//fmt.Println("SENDER")
 		// WRITE
 		b,_ := json.Marshal(temp)
@@ -278,8 +278,8 @@ func SlaveUpdate(in chan *Data, out chan *Data) { // chan muligens, bare oppdate
 		
 		b,_ := json.Marshal(*data)
 		// Må endre detta til å bare slette når confirmation på ordre kommer, confirmation kan vere samma som lampe lista??
-		data.Statuses[GetIndex(GetID(), data)].UpList = data.Statuses[GetIndex(GetID(), data)].UpList[:0]
-		data.Statuses[GetIndex(GetID(), data)].DownList = data.Statuses[GetIndex(GetID(), data)].DownList[:0]
+		//data.Statuses[GetIndex(GetID(), data)].UpList = data.Statuses[GetIndex(GetID(), data)].UpList[:0]
+		//data.Statuses[GetIndex(GetID(), data)].DownList = data.Statuses[GetIndex(GetID(), data)].DownList[:0]
 		
 		conn.Write(b)	
 		checkError(err)
