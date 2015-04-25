@@ -407,14 +407,14 @@ func CostFunction(in chan *udp.Data, out chan *udp.Data) {
 			}
 		}
 
-	if len(UpList) > 0 || len(DownList) > 0{
-		//fmt.Println("status.UpList i CostFunction: ",data.Statuses[udp.GetIndex(data.PrimaryQ[0], data)].UpList)
-		fmt.Println("Lengden til statuses: ", len(data.Statuses))
-		fmt.Println("PrimaryQ: ", data.PrimaryQ)
-		fmt.Println("control 258: OppList i cost function: ", UpList)
-		fmt.Println("control 259: Down List i cost function: ", DownList)
-		time.Sleep(2*time.Second)
-	}
+	//if len(UpList) > 0 || len(DownList) > 0{
+	//	//fmt.Println("status.UpList i CostFunction: ",data.Statuses[udp.GetIndex(data.PrimaryQ[0], data)].UpList)
+	//	fmt.Println("Lengden til statuses: ", len(data.Statuses))
+	//	fmt.Println("PrimaryQ: ", data.PrimaryQ)
+	//	fmt.Println("control 258: OppList i cost function: ", UpList)
+	//	fmt.Println("control 259: Down List i cost function: ", DownList)
+	//	time.Sleep(2*time.Second)
+	//}
 	
 	if len(UpList) > 0 {
 		UpList = functions.SortUp(UpList)

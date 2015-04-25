@@ -147,12 +147,13 @@ func PrimaryListen(in chan *Data, out chan *Data) {
 				data.Statuses[i] = tempData.Statuses[i]
 			}
 			if len(tempData.Statuses) > len(data.Statuses){
+				fmt.Println("Legger til nye element i statuses")
 				data.Statuses = append(data.Statuses, tempData.Statuses[len(data.Statuses):]...)
 			}
 			data.PrimaryQ = tempData.PrimaryQ
 			out <- data
 		default:
-			fmt.Println("HØRER")
+			//fmt.Println("HØRER")
 			if len(tempData.PrimaryQ) == 1{
 				conn.SetReadDeadline(time.Now().Add(500*time.Millisecond))
 			}
@@ -208,8 +209,8 @@ func ListenForPrimary(bconn *net.UDPConn, baddr *net.UDPAddr, in chan *Data, out
 	for {
 		data = <-in 
 		
-		//fmt.Println("Hører")
-		//fmt.Println("Her er gammel OrderList: ", data.Statuses[GetIndex(GetID(),data)].OrderList)	
+		fmt.Println("Hører")
+		fmt.Println("Her er gammel OrderList: ", data.Statuses[GetIndex(GetID(),data)].OrderList)	
 		bconn.SetReadDeadline(time.Now().Add(5*time.Second))		
 		n, err := bconn.Read(buffer)
 		if err != nil && data.PrimaryQ[1] == GetID() {
@@ -226,9 +227,9 @@ func ListenForPrimary(bconn *net.UDPConn, baddr *net.UDPAddr, in chan *Data, out
 		err = json.Unmarshal(buffer[0:n], &temp)
 		if(temp.PriBroad == false) {
 			*data = temp	
-			//fmt.Println("her er primaryQen:", data.PrimaryQ)
-			//fmt.Println("Her er ny OrderList: ", data.Statuses[GetIndex(GetID(),data)].OrderList)
-			//fmt.Println("Index: ", GetIndex(GetID(),data))
+			fmt.Println("her er primaryQen:", data.PrimaryQ)
+			fmt.Println("Her er ny OrderList: ", data.Statuses[GetIndex(GetID(),data)].OrderList)
+			fmt.Println("Index: ", GetIndex(GetID(),data))
 		}	
 		out <- data
 		
