@@ -277,8 +277,8 @@ func ListenForPrimary(bconn *net.UDPConn,baddr *net.UDPAddr ,in chan *Data, out 
 		err = json.Unmarshal(buffer[0:n], &temp)
 		fmt.Println("PrimaryQ: ", temp.PrimaryQ)
 		
-		if(temp.PriBroad == false || len(data.PrimaryQ)!=len(temp.PrimaryQ)) {
-			data = &temp	
+		if(temp.PriBroad == false) {
+			*data = temp	
 			fmt.Println("her er primaryQen:", data.PrimaryQ)
 			fmt.Println("Her er ny OrderList: ", data.Statuses[GetIndex(GetID(),data)].OrderList)
 			fmt.Println("Index: ", GetIndex(GetID(),data))
