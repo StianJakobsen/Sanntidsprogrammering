@@ -185,8 +185,8 @@ func PrimaryListen(in chan *Data, out chan *Data) {
 		
 				fmt.Println("Delay: ", functions.Delay(receivedData.Statuses[GetIndex(receivedData.ID, &receivedData)].LastUpdate,time.Now()))
 				if(functions.Delay(time.Now(),receivedData.Statuses[GetIndex(receivedData.ID, &receivedData)].LastUpdate)>5){
-					tempData.Statuses[0].UpList = append(tempData.Statuses[0].UpList, receivedData.Statuses[GetIndex(receivedData.PrimaryQ[i], &receivedData)].UpList...)
-					tempData.Statuses[0].DownList = append(tempData.Statuses[0].DownList, receivedData.Statuses[GetIndex(receivedData.PrimaryQ[i], &receivedData)].DownList...)
+					tempData.Statuses[0].UpList = append(tempData.Statuses[0].UpList, receivedData.Statuses[GetIndex(receivedData.ID, &receivedData)].UpList...)
+					tempData.Statuses[0].DownList = append(tempData.Statuses[0].DownList, receivedData.Statuses[GetIndex(receivedData.ID, &receivedData)].DownList...)
 					for j:=0;j<6;j++{
 						if(tempData.ButtonList[j] == 1 && j<3) {
 							tempData.Statuses[0].UpList = append(tempData.Statuses[0].UpList,j) 
@@ -195,9 +195,9 @@ func PrimaryListen(in chan *Data, out chan *Data) {
 							tempData.Statuses[0].DownList = append(tempData.Statuses[0].DownList,j-2)
 						}
 					}
-					tempData.Statuses = UpdateStatusList(receivedData.Statuses,GetIndex(tempData.PrimaryQ[i],&tempData))
-					tempData.PrimaryQ = functions.UpdateList(tempData.PrimaryQ,i)
-					i--
+					tempData.Statuses = UpdateStatusList(receivedData.Statuses,GetIndex(tempData.ID,&tempData))
+					tempData.PrimaryQ = functions.UpdateList(tempData.PrimaryQ,GetIndex(receivedData.ID,&tempData))
+				
 				}
 			
 			
