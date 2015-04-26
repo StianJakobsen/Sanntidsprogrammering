@@ -174,7 +174,7 @@ func PrimaryListen(in chan *Data, out chan *Data) {
 				//Data = buffer
 				err = json.Unmarshal(buffer[0:n], &receivedData)
 				checkError(err)
-				fmt.Printf("Går inn i Checklisttingeling: %v, ID: %d", receivedData.PrimaryQ, receivedData.ID)
+				fmt.Printf("Går inn i Checklisttingeling: %v, ID: %d\n", receivedData.PrimaryQ, receivedData.ID)
 				if functions.CheckList(tempData.PrimaryQ,receivedData.ID)==false {
 					fmt.Printf("Går inn i Checklisttingeling: %v, ID: %d", receivedData.PrimaryQ, receivedData.ID)
 					tempData.Statuses = append(tempData.Statuses, receivedData.Statuses[GetIndex(receivedData.ID, &receivedData)])
@@ -339,7 +339,7 @@ func SlaveUpdate(in chan *Data, out chan *Data) { // chan muligens, bare oppdate
 		
 		conn.Write(b)	
 		checkError(err)
-		time.Sleep(50*time.Millisecond) // bytte til bare ved endringar etterhvert
+		time.Sleep(250*time.Millisecond) // bytte til bare ved endringar etterhvert
 		if data.Statuses[GetIndex(GetID(), data)].Primary == true {
 			break
 		//}
