@@ -340,7 +340,7 @@ func SlaveUpdate(in chan *Data, out chan *Data) { // chan muligens, bare oppdate
 		
 		conn.Write(b)	
 		checkError(err)
-		time.Sleep(250*time.Millisecond) // bytte til bare ved endringar etterhvert
+		time.Sleep(150*time.Millisecond) // bytte til bare ved endringar etterhvert
 		if data.Statuses[GetIndex(GetID(), data)].Primary == true {
 			break
 		//}
