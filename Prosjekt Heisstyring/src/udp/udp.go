@@ -184,7 +184,7 @@ func PrimaryListen(in chan *Data, out chan *Data) {
 					tempData.ID = receivedData.ID
 					SendOrderlist(&tempData,1)
 				}else{
-					
+					fmt.Println("Received ID: ", receivedData.ID) 
 					tempData.ID = receivedData.ID
 					tempData.Statuses[GetIndex(tempData.ID,&tempData)] = tempData.Statuses[GetIndex(tempData.ID, &tempData)]
 				}
