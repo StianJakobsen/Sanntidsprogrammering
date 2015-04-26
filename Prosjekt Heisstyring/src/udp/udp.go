@@ -206,7 +206,7 @@ func PrimaryListen(in chan *Data, out chan *Data) {
 					}
 					tempData.Statuses = UpdateStatusList(tempData.Statuses,GetIndex(tempData.ID,&tempData))
 					tempData.PrimaryQ = functions.UpdateList(tempData.PrimaryQ,GetIndex(tempData.ID,&tempData))
-				
+					SendOrderlist(&tempData,1)
 				}
 			
 			

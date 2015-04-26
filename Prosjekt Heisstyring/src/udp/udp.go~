@@ -210,11 +210,7 @@ func PrimaryListen(in chan *Data, out chan *Data) {
 				}
 			
 			
-			//if update == true{
-			//	out <- data
-			//	update = false
-			//}
-			//(*data).Statuses[GetIndex((*data).Status.ID,data)] = (*data).Status // Oppdaterar mottatt status hos primary 
+
 		}
 		
 	}
