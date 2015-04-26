@@ -305,7 +305,7 @@ func CostFunction(in chan *udp.Data, out chan *udp.Data) {
 		handled = 0
 		//fmt.Println("status.UpList i CostFunction: ",(*data).Statuses[udp.GetIndex((*data).PrimaryQ[0], data)].UpList)
 		//fmt.Println("Lengden til statuses: ", len(data.Statuses))
-		//fmt.Println("PrimaryQ: ", data.PrimaryQ)
+		fmt.Println("PrimaryQ: ", data.PrimaryQ)
 		/*if len(data.Statuses[udp.GetIndex(data.PrimaryQ[0], data)].OrderList) > 0 {
 		if(data.Statuses[udp.GetIndex(data.PrimaryQ[0], data)].OrderList[0] == -1){
 			data.Statuses[udp.GetIndex(data.PrimaryQ[0], data)].OrderList = UpdateList(data.Statuses[udp.GetIndex(data.PrimaryQ[0], data)].OrderList, 0)
