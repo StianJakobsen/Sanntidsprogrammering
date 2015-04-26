@@ -181,7 +181,7 @@ func PrimaryListen(in chan *Data, out chan *Data) {
 					tempData.Statuses = append(tempData.Statuses, receivedData.Statuses[GetIndex(receivedData.ID, &receivedData)])
 					tempData.PrimaryQ = append(tempData.PrimaryQ, receivedData.ID) //PrimaryQ[1:]...)
 					tempData.ID = receivedData.ID
-					SendOrderlist(tempData,1)
+					SendOrderlist(&tempData,1)
 				}else{
 					
 					tempData.ID = receivedData.ID
