@@ -183,9 +183,10 @@ func PrimaryListen(in chan *Data, out chan *Data) {
 			tempData.Statuses[0].LastUpdate = time.Now()
 			
 			for i:=1;i<len(tempData.PrimaryQ);i++{
-				if(functions.Delay(tempData.Statuses[0].LastUpdate,tempData.Statuses[GetIndex(tempData.PrimaryQ[i], &tempData)].LastUpdate)>5){
-					tempData.Statuses[0].UpList = append(tempData.Statuses[0].UpList, tempData.Statuses[GetIndex(tempData.PrimaryQ[i], &tempData)].UpList...)
-					tempData.Statuses[0].DownList = append(tempData.Statuses[0].DownList, tempData.Statuses[GetIndex(tempData.PrimaryQ[i], &tempData)].DownList...)
+				fmt.Println("Delay: ", functions.Delay(tempData.Statuses[0].LastUpdate,tempData.Statuses[GetIndex(tempData.PrimaryQ[i], &tempData)].LastUpdate))
+				if(functions.Delay(tempData.Statuses[0].LastUpdate,receivedData.Statuses[GetIndex(receivedData.PrimaryQ[i], &receivedData)].LastUpdate)>5){
+					tempData.Statuses[0].UpList = append(tempData.Statuses[0].UpList, receivedData.Statuses[GetIndex(receivedData.PrimaryQ[i], &receivedData)].UpList...)
+					tempData.Statuses[0].DownList = append(tempData.Statuses[0].DownList, receivedData.Statuses[GetIndex(receivedData.PrimaryQ[i], &receivedData)].DownList...)
 					for j:=0;j<6;j++{
 						if(tempData.ButtonList[j] == 1 && j<3) {
 							tempData.Statuses[0].UpList = append(tempData.Statuses[0].UpList,j) 
