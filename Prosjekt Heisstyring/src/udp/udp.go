@@ -131,9 +131,8 @@ func PrimaryListen(in chan *Data, out chan *Data) {
 	data := <-in
 	out<-data
 	//updating := false
-	//var tempData Data
 	tempData := *data
-	var temp Data
+	var receivedData Data
 	tempData.ID = GetID()
 	udpAddr, err := net.ResolveUDPAddr("udp", ":39999")
 	conn, err := net.ListenUDP("udp", udpAddr)
@@ -160,6 +159,7 @@ func PrimaryListen(in chan *Data, out chan *Data) {
 				data.Statuses[i] = tempData.Statuses[i]
 			}
 			data.PrimaryQ = tempData.PrimaryQ
+			data.ButtonList = tempData.ButtonList
 			out <- data
 		default:
 			//fmt.Println("HØRER")
@@ -172,20 +172,31 @@ func PrimaryListen(in chan *Data, out chan *Data) {
 				//fmt.Println("Mottok ei melding")
 				//checkError(err)
 				//Data = buffer
-				err = json.Unmarshal(buffer[0:n], &temp)
-				if functions.CheckList(tempData.PrimaryQ,temp.ID)==false {
-					tempData.Statuses = append(tempData.Statuses, temp.Statuses[GetIndex(temp.ID, &temp)])
-					tempData.PrimaryQ = append(tempData.PrimaryQ, temp.PrimaryQ[len(temp.Statuses)-1]) //PrimaryQ[1:]...)
+				err = json.Unmarshal(buffer[0:n], &receivedData)
+				if functions.CheckList(tempData.PrimaryQ,receivedData.ID)==false {
+					tempData.Statuses = append(tempData.Statuses, receivedData.Statuses[GetIndex(receivedData.ID, &receivedData)])
+					tempData.PrimaryQ = append(tempData.PrimaryQ, receivedData.PrimaryQ[len(receivedData.Statuses)-1]) //PrimaryQ[1:]...)
 				}else{
-					tempData.Statuses[GetIndex(temp.ID,&tempData)] = temp.Statuses[GetIndex(temp.ID, &temp)]
+					tempData.Statuses[GetIndex(receivedData.ID,&tempData)] = receivedData.Statuses[GetIndex(receivedData.ID, &receivedData)]
 				}
 			}
 			tempData.Statuses[0].LastUpdate = time.Now()
+			
 			for i:=1;i<len(tempData.PrimaryQ);i++{
-				//fmt.Printf("Delay i heis %d: %d\n",tempData.PrimaryQ[i], functions.Delay(tempData.Statuses[0].LastUpdate,tempData.Statuses[GetIndex(tempData.PrimaryQ[i], &tempData)].LastUpdate))
 				if(functions.Delay(tempData.Statuses[0].LastUpdate,tempData.Statuses[GetIndex(tempData.PrimaryQ[i], &tempData)].LastUpdate)>5){
-					tempData.Statuses = UpdateStatusList(temp.Statuses,GetIndex(data.PrimaryQ[i],data))
-					tempData.PrimaryQ = functions.UpdateList(temp.PrimaryQ,i)
+					tempData.Statuses[0].UpList = append(tempData.Statuses[0].UpList, tempData.Statuses[GetIndex(tempData.PrimaryQ[i], &tempData)].UpList...)
+					tempData.Statuses[0].DownList = append(tempData.Statuses[0].DownList, tempData.Statuses[GetIndex(tempData.PrimaryQ[i], &tempData)].DownList...)
+					for j:=0;j<6;j++{
+						if(tempData.ButtonList[j] == 1 && j<3) {
+							tempData.Statuses[0].UpList = append(tempData.Statuses[0].UpList,j) 
+							
+						}else if(tempData.ButtonList[j] == 1){
+							tempData.Statuses[0].DownList = append(tempData.Statuses[0].DownList,j-2)
+						}
+					}
+					tempData.Statuses = UpdateStatusList(receivedData.Statuses,GetIndex(tempData.PrimaryQ[i],&tempData))
+					tempData.PrimaryQ = functions.UpdateList(tempData.PrimaryQ,i)
+					i--
 				}
 			}	
 			
@@ -233,6 +244,17 @@ func ListenForPrimary(bconn *net.UDPConn,baddr *net.UDPAddr ,in chan *Data, out 
 		n, err := bconn.Read(buffer)
 		if err != nil && data.PrimaryQ[1] == GetID() {
 			fmt.Println("Mottar ikke meldinger fra primary lenger, tar over")
+			//fiks primary sin orderlist
+			data.Statuses[1].UpList = append(data.Statuses[1].UpList,data.Statuses[0].UpList...)
+			data.Statuses[1].DownList = append(data.Statuses[1].DownList,data.Statuses[0].DownList...)
+			for j:=0;j<6;j++{
+				if(data.ButtonList[j] == 1 && j<3) {
+					data.Statuses[1].UpList = append(data.Statuses[1].UpList,j) 
+				}else if(data.ButtonList[j] == 1){
+					data.Statuses[1].DownList = append(data.Statuses[1].DownList,j-2)
+				}
+			}
+			
 			data.PrimaryQ = data.PrimaryQ[1:] // UpdateList(data.PrimaryQ,0)
 			data.Statuses = data.Statuses[1:]
 			go PrimaryBroadcast(baddr, data)

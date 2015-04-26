@@ -374,13 +374,10 @@ func CostFunction(in chan *udp.Data, out chan *udp.Data) {
 				DownList = functions.UpdateList(DownList,down) //Må modifiseres
 				data.Statuses[i].OrderList = functions.SortDown(data.Statuses[i].OrderList)
 				data.Statuses[i].Running = 0
-				fmt.Println("control 280: Heis i samma floor og står stille. Downlist:", DownList)
-					
-				if i != 0 {
-					udp.SendOrderlist(data,i) // , i)
-				}else{
-					
-				}
+				fmt.Println("control 280: Heis i samma floor og står stille. Downlist:", DownList)				
+				
+				udp.SendOrderlist(data,i)
+
 				handled = 1
 				break
 				//pluss noe mer, som å åpne døra
@@ -427,9 +424,7 @@ func CostFunction(in chan *udp.Data, out chan *udp.Data) {
 				}
 				DownList = functions.UpdateList(DownList,down)
 				
-				if i != 0 {
-					udp.SendOrderlist(data,i) // , i)
-				}
+				udp.SendOrderlist(data,i)
 				handled = 1
 				break 
 			}
@@ -451,9 +446,7 @@ func CostFunction(in chan *udp.Data, out chan *udp.Data) {
 				data.Statuses[i].OrderList = functions.SortDown(data.Statuses[i].OrderList)
 			
 				
-				if i != 0 {
-					udp.SendOrderlist(data,i) // , i)
-				}
+				udp.SendOrderlist(data,i)
 				handled = 1
 				break 
 			}
@@ -481,9 +474,7 @@ func CostFunction(in chan *udp.Data, out chan *udp.Data) {
 					}	
 				}
 				DownList = functions.UpdateList(DownList,down)
-				if i != 0 {
-					udp.SendOrderlist(data,i) // , i)
-				}
+				udp.SendOrderlist(data,i)
 				handled = 1
 				break 
 			}
@@ -522,9 +513,7 @@ for up:=0; up<len(UpList);up++ {
 				}
 				UpList = functions.UpdateList(UpList,up)
 				
-				if i != 0 {
-					udp.SendOrderlist(data,i) // , i)
-				}
+				udp.SendOrderlist(data,i)
 				handled = 1
 				break 
 				//pluss noe mer, som å åpne døra
@@ -547,9 +536,7 @@ for up:=0; up<len(UpList);up++ {
 				}
 				UpList = functions.UpdateList(UpList,up)
 				//data.Statuses[i].UpList = functions.UpdateList(data.Statuses[i].UpList, up)
-				if i != 0 {
-					udp.SendOrderlist(data,i) // , i)
-				}
+				udp.SendOrderlist(data,i)
 				handled = 1
 				break 
 			}
@@ -571,9 +558,7 @@ for up:=0; up<len(UpList);up++ {
 					}	
 				}
 				UpList = functions.UpdateList(UpList,up)				
-				if i != 0 {
-					udp.SendOrderlist(data,i) // , i)
-				}
+				udp.SendOrderlist(data,i)
 				handled = 1
 				break 
 			}
@@ -595,9 +580,7 @@ for up:=0; up<len(UpList);up++ {
 				}
 				UpList = functions.UpdateList(UpList,up)
 				
-				if i != 0 {
-					udp.SendOrderlist(data,i) // , i)
-				}
+				udp.SendOrderlist(data,i)
 				handled = 1
 				break 
 			}
@@ -627,9 +610,8 @@ for up:=0; up<len(UpList);up++ {
 					}	
 				}
 				UpList = functions.UpdateList(UpList,up)
-				if i != 0 {
-					udp.SendOrderlist(data,i) // , i)
-				}
+				
+				udp.SendOrderlist(data,i)
 				
 				handled = 1
 				break 
