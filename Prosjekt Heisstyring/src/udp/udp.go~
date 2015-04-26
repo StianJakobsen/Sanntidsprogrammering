@@ -176,17 +176,19 @@ func PrimaryListen(in chan *Data, out chan *Data) {
 				if functions.CheckList(tempData.PrimaryQ,receivedData.ID)==false {
 					tempData.Statuses = append(tempData.Statuses, receivedData.Statuses[GetIndex(receivedData.ID, &receivedData)])
 					tempData.PrimaryQ = append(tempData.PrimaryQ, receivedData.ID) //PrimaryQ[1:]...)
+					tempData.ID = receivedData.ID
 				}else{
 					tempData.Statuses[GetIndex(receivedData.ID,&tempData)] = receivedData.Statuses[GetIndex(receivedData.ID, &receivedData)]
+					tempData.ID = receivedData.ID
 				}
 			}
 			tempData.Statuses[0].LastUpdate = time.Now()
 			
 		
-				fmt.Println("Delay: ", functions.Delay(receivedData.Statuses[GetIndex(receivedData.ID, &receivedData)].LastUpdate,time.Now()))
-				if(functions.Delay(time.Now(),receivedData.Statuses[GetIndex(receivedData.ID, &receivedData)].LastUpdate)>5){
-					tempData.Statuses[0].UpList = append(tempData.Statuses[0].UpList, receivedData.Statuses[GetIndex(receivedData.ID, &receivedData)].UpList...)
-					tempData.Statuses[0].DownList = append(tempData.Statuses[0].DownList, receivedData.Statuses[GetIndex(receivedData.ID, &receivedData)].DownList...)
+				fmt.Println("Delay: ", functions.Delay(tempData.Statuses[GetIndex(tempData.ID, &tempData)].LastUpdate,time.Now()))
+				if(functions.Delay(time.Now(),tempData.Statuses[GetIndex(tempData.ID, &tempData)].LastUpdate)>5){
+					tempData.Statuses[0].UpList = append(tempData.Statuses[0].UpList, tempData.Statuses[GetIndex(tempData.ID, &tempData)].UpList...)
+					tempData.Statuses[0].DownList = append(tempData.Statuses[0].DownList, tempData.Statuses[GetIndex(tempData.ID, &tempData)].DownList...)
 					for j:=0;j<6;j++{
 						if(tempData.ButtonList[j] == 1 && j<3) {
 							tempData.Statuses[0].UpList = append(tempData.Statuses[0].UpList,j) 
@@ -195,8 +197,8 @@ func PrimaryListen(in chan *Data, out chan *Data) {
 							tempData.Statuses[0].DownList = append(tempData.Statuses[0].DownList,j-2)
 						}
 					}
-					tempData.Statuses = UpdateStatusList(receivedData.Statuses,GetIndex(tempData.ID,&tempData))
-					tempData.PrimaryQ = functions.UpdateList(tempData.ID,GetIndex(receivedData.ID,&tempData))
+					tempData.Statuses = UpdateStatusList(tempData.Statuses,GetIndex(tempData.ID,&tempData))
+					tempData.PrimaryQ = functions.UpdateList(tempData.PrimaryQ,GetIndex(tempData.ID,&tempData))
 				
 				}
 			
