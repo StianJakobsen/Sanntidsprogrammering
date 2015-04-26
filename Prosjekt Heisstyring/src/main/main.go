@@ -33,6 +33,7 @@ func main() {
 	timeChan := make(chan time.Time)
 	//SortChan := make(chan int)
 	
+	
 	if driver.InitElevator() == 0 {
 		fmt.Println("Unable to initialize elevator hardware!")
 	return
@@ -57,6 +58,8 @@ func main() {
 		go control.CostFunction(costIn, costOut)
 		costIn <- &data
 	}
+
+	timeChan <-time.Now()
 
 	for {
 		//fmt.Println("Uplist?: ", data.Statuses[0].UpList)
