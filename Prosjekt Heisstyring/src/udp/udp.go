@@ -163,9 +163,9 @@ func PrimaryListen(in chan *Data, out chan *Data) {
 			out <- data
 		default:
 			//fmt.Println("HØRER")
-			if len(tempData.PrimaryQ) == 1{
-				conn.SetReadDeadline(time.Now().Add(500*time.Millisecond))
-			}
+			//if len(tempData.PrimaryQ) == 1{
+			//	conn.SetReadDeadline(time.Now().Add(500*time.Millisecond))
+			//}
 			n, err := conn.Read(buffer) // Høtt skjer om den stoppar her?
 			//out<- data
 			if err == nil{
