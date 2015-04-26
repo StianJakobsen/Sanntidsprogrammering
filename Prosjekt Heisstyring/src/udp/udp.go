@@ -182,7 +182,7 @@ func PrimaryListen(in chan *Data, out chan *Data) {
 			}
 			tempData.Statuses[0].LastUpdate = time.Now()
 			for i:=1;i<len(tempData.PrimaryQ);i++{
-				fmt.Printf("Delay i heis %d: %d\n",tempData.PrimaryQ[i], functions.Delay(tempData.Statuses[0].LastUpdate,tempData.Statuses[GetIndex(tempData.PrimaryQ[i], &tempData)].LastUpdate))
+				//fmt.Printf("Delay i heis %d: %d\n",tempData.PrimaryQ[i], functions.Delay(tempData.Statuses[0].LastUpdate,tempData.Statuses[GetIndex(tempData.PrimaryQ[i], &tempData)].LastUpdate))
 				if(functions.Delay(tempData.Statuses[0].LastUpdate,tempData.Statuses[GetIndex(tempData.PrimaryQ[i], &tempData)].LastUpdate)>5){
 					tempData.Statuses = UpdateStatusList(temp.Statuses,GetIndex(data.PrimaryQ[i],data))
 					tempData.PrimaryQ = functions.UpdateList(temp.PrimaryQ,i)

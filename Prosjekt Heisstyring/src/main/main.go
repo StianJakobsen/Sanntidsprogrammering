@@ -46,6 +46,7 @@ func main() {
 	
 	go control.GetDestination(&data)
 	go control.ElevatorControl(&data) //statusIn, statusOut)
+	go control.LampControl(&data)
 	
 	
 	if data.Statuses[udp.GetIndex(udp.GetID(), &data)].Primary {

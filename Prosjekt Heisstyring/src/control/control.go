@@ -84,20 +84,22 @@ func GoToFloor(floor int, data *udp.Data) { // Lamper for command buttons må le
 	//fmt.Println("control 82: går til floor floor:",floor)
 	//fmt.Println("control 82: er i floor:",status.CurrentFloor)
 	for { 
+
 		driver.SetFloorIndicator(driver.GetFloorSensorSignal())
 		if floor == driver.GetFloorSensorSignal() {
+				
 				driver.SetFloorIndicator(floor)
 				driver.SetButtonLamp(2,floor,0)
 				driver.SetMotorDirection(driver.DIRN_STOP)
 				driver.SetDoorOpenLamp(true)				
 				time.Sleep(1500*time.Millisecond)
 				driver.SetDoorOpenLamp(false)
-
+				fmt.Println("ButtonList??: ", data.ButtonList)
 				data.Statuses[udp.GetIndex(udp.GetID(),data)].CurrentFloor = floor
 				if((floor == 0 || floor == 3) || len(data.Statuses[udp.GetIndex(udp.GetID(), data)].OrderList) == 0){
 					data.Statuses[udp.GetIndex(udp.GetID(),data)].Running = 0
-					driver.SetButtonLamp(0,floor,0)
-					driver.SetButtonLamp(1,floor,0)
+					//driver.SetButtonLamp(0,floor,0)
+					//driver.SetButtonLamp(1,floor,0)
 					if(floor == 3){
 						data.ButtonList[5] = 0	
 					}else if(floor == 0){
@@ -107,25 +109,29 @@ func GoToFloor(floor int, data *udp.Data) { // Lamper for command buttons må le
 						data.ButtonList[floor+2]=0 
 					}
 				}else if(data.Statuses[udp.GetIndex(udp.GetID(),data)].Running == 1){
-					driver.SetButtonLamp(0, floor, 0)
+					//driver.SetButtonLamp(0, floor, 0)
 					data.ButtonList[floor] = 0
 				}else if(data.Statuses[udp.GetIndex(udp.GetID(),data)].Running == -1){
-					driver.SetButtonLamp(1,floor,0)
+					//driver.SetButtonLamp(1,floor,0)
 					data.ButtonList[floor+2] = 0
 				}
+
 				//if list == 1 {
 				//	driver.SetButtonLamp((*status).ButtonList[0], floor, 0)
 				//	(*status).ButtonList = functions.UpdateList((*status).ButtonList,0)
 				//}
 				fmt.Println("Heisen er framme på floor:", floor)
 				udp.PrintData(*data)
+				
 				break
 		} else if floor > driver.GetFloorSensorSignal() && driver.GetFloorSensorSignal() != -1 && floor != -1 {   
 			driver.SetMotorDirection(driver.DIRN_UP)
 			data.Statuses[udp.GetIndex(udp.GetID(),data)].Running = 1
+
 		} else if floor < driver.GetFloorSensorSignal() && driver.GetFloorSensorSignal() != -1 && floor != -1{
 			driver.SetMotorDirection(driver.DIRN_DOWN)
 			data.Statuses[udp.GetIndex(udp.GetID(),data)].Running = -1
+
 		}/*else if data.Statuses[udp.GetIndex(udp.GetID(),data)].CurrentFloor == -1{
 			
 			driver.SetMotorDirection(driver.DIRN_DOWN)
@@ -145,20 +151,7 @@ func ElevatorControl(data *udp.Data) {
 	//temp = temp + 0
 	
 	for {
-		for i:=0;i<3;i++{
-			if(data.ButtonList[i] == 0){
-				driver.SetButtonLamp(0,i,0)
-			}else if(data.ButtonList[i] == 1){
-				fmt.Println("Setter på lampe UP i etasje ",i)
-				driver.SetButtonLamp(0,i,1)
-			}
-			if(data.ButtonList[i+3] == 0){
-				driver.SetButtonLamp(1,i+1,0)
-			}else if(data.ButtonList[i+3] == 1){
-				driver.SetButtonLamp(1,i+1,1)
-				fmt.Println("Setter på lampe UP i etasje ",i+1)
-			}
-		}
+
 		//&&data.Statuses[udp.GetIndex(udp.GetID(),data)] = <-data.Statuses[udp.GetIndex(udp.GetID(),data)]In
 	
 		//if driver.GetFloorSensorSignal() != -1 {
@@ -212,7 +205,7 @@ func ElevatorControl(data *udp.Data) {
 func GetDestination(data *udp.Data) { //returnerer bare button, orderlist oppdateres
 	//time.Sleep(1*time.Second)
 	for {
-		time.Sleep(2*time.Millisecond) // Polling rate, mby change	
+		time.Sleep(50*time.Millisecond) // Polling rate, mby change	
 		for floor := 0; floor < driver.N_FLOORS; floor++ {
 				if driver.GetButtonSignal(0,floor) == 1 && len(data.Statuses[udp.GetIndex(udp.GetID(),data)].UpList) == 0 {
 					data.Statuses[udp.GetIndex(udp.GetID(),data)].UpList = append(data.Statuses[udp.GetIndex(udp.GetID(),data)].UpList, floor)
@@ -652,8 +645,22 @@ for up:=0; up<len(UpList);up++ {
 	}
 	}
 }
-
-
+func LampControl(data *udp.Data){
+	for{
+		for i:=0;i<3;i++{
+			if(data.ButtonList[i] == 0){
+				driver.SetButtonLamp(0,i,0)
+			}else if(data.ButtonList[i] == 1){
+				driver.SetButtonLamp(0,i,1)
+			}
+			if(data.ButtonList[i+3] == 0){
+				driver.SetButtonLamp(1,i+1,0)
+			}else if(data.ButtonList[i+3] == 1){
+				driver.SetButtonLamp(1,i+1,1)
+			}
+		}
+	}
+}
 
 
 
