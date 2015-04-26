@@ -8,7 +8,7 @@ import ("fmt" // Using '.' to avoid prefixing functions with their package names
 	//"bufio"
 	//"os"
 	//"strconv"
-	//"driver"
+	"driver"
 	//"sort"
 	//"encoding/json"
 	"sort"
@@ -88,6 +88,27 @@ func SortDown(DownList []int)  []int{
 func Delay(SlaveTime time.Time, PrimeTime time.Time) int{
 	temp := SlaveTime.Sub(PrimeTime)
 	return int(math.Floor(temp.Seconds()))
+}
+func printData(data Data) {
+	vektor1 := []string{"-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-"}
+	//vektor2 := vektor1
+	for j:=driver.N_FLOORS;j>-1;j--{	
+		
+		vektor1 = []string{"-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-"}
+		for i:=0;i<len(data.PrimaryQ);i++{
+			if(data.Statuses[i].CurrentFloor == j){
+				vektor1[2+10*i]= "#"
+			}
+		}
+		fmt.Print(j)
+		fmt.Print(": ")
+		fmt.Println(vektor1)
+		
+	//fmt.Println(vektor2)
+	}
+
+
+
 }
 	
 
