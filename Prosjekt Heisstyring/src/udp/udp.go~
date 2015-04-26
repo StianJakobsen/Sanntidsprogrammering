@@ -36,7 +36,7 @@ type Status struct {
 type Data struct {
 	//Status Status
 	//Timestamp???????
-	ButtonList []int
+	ButtonList []int // [up0,up1,up2,dwn1,dwn2,dwn3]
 	PriBroad bool
 	ID int
 	Statuses []Status // Oppdatere den her å i UdpInit()
@@ -177,7 +177,7 @@ func PrimaryListen(in chan *Data, out chan *Data) {
 					tempData.Statuses = append(tempData.Statuses, temp.Statuses[GetIndex(temp.ID, &temp)])
 					tempData.PrimaryQ = append(tempData.PrimaryQ, temp.PrimaryQ[len(temp.Statuses)-1]) //PrimaryQ[1:]...)
 				}else{
-					tempData.Statuses[GetIndex(temp.ID, data)] = temp.Statuses[GetIndex(temp.ID, data)]
+					tempData.Statuses[GetIndex(tempData.ID,tempData)] = temp.Statuses[GetIndex(temp.ID, temp)]
 				}
 			}
 			tempData.Statuses[0].LastUpdate = time.Now()
