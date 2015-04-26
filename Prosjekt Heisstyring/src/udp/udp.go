@@ -189,14 +189,15 @@ func PrimaryListen(in chan *Data, out chan *Data) {
 					tempData.ID = receivedData.ID
 					tempData.Statuses[GetIndex(tempData.ID,&tempData)] = tempData.Statuses[GetIndex(tempData.ID, &tempData)]
 					tempData.Statuses[GetIndex(tempData.ID, &tempData)].LastUpdate = time.Now() 
+					
 				}
 				
 			}
 			tempData.Statuses[0].LastUpdate = time.Now()
 			
-			//fmt.Println("PrimaryQ: ", tempData.PrimaryQ)
+			fmt.Println("PrimaryQ: ", tempData.PrimaryQ)
 		
-				/*fmt.Println("Delay: ", functions.Delay(tempData.Statuses[GetIndex(tempData.ID, &tempData)].LastUpdate,time.Now()))
+				fmt.Println("Delay: ", functions.Delay(tempData.Statuses[GetIndex(tempData.ID, &tempData)].LastUpdate,time.Now()))
 				if(functions.Delay(time.Now(),tempData.Statuses[GetIndex(tempData.ID, &tempData)].LastUpdate)>5){
 					tempData.Statuses[0].UpList = append(tempData.Statuses[0].UpList, tempData.Statuses[GetIndex(tempData.ID, &tempData)].UpList...)
 					tempData.Statuses[0].DownList = append(tempData.Statuses[0].DownList, tempData.Statuses[GetIndex(tempData.ID, &tempData)].DownList...)
@@ -211,7 +212,7 @@ func PrimaryListen(in chan *Data, out chan *Data) {
 					tempData.Statuses = UpdateStatusList(tempData.Statuses,GetIndex(tempData.ID,&tempData))
 					tempData.PrimaryQ = functions.UpdateList(tempData.PrimaryQ,GetIndex(tempData.ID,&tempData))
 					SendOrderlist(&tempData,1)
-				}*/
+				}
 			
 			
 
