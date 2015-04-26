@@ -335,7 +335,7 @@ func SlaveAlive(data *Data) {
 	}
 }
 */
-func SlaveUpdate(in chan *Data, out chan *Data, timeChan chan time.Time) { // chan muligens, bare oppdatere når det er endringar
+func SlaveUpdate(in chan *Data, out chan *Data) { // chan muligens, bare oppdatere når det er endringar
 	data := <-in
 	out<- data
 	//init := 0
@@ -347,7 +347,6 @@ func SlaveUpdate(in chan *Data, out chan *Data, timeChan chan time.Time) { // ch
 		 //WRITE
 		data = <-in
 		data.ID = GetID()
-		data.Statuses[GetIndex(data.ID,data)].LastUpdate = <-timeChan
 		fmt.Println("Data.ID før sending",data.ID)
 		
 		if(driver.GetFloorSensorSignal()!=-1){	
@@ -374,7 +373,7 @@ func SlaveUpdate(in chan *Data, out chan *Data, timeChan chan time.Time) { // ch
 }
 
 // send_ch, receive_ch chan Udp_message
-func UdpInit(localListenPort int, broadcastListenPort int, message_size int, data *Data, slaveListenIn chan *Data, slaveListenOut chan *Data, PrimaryChan chan int, SlaveChan chan int, timeChan chan time.Time) (err error) {
+func UdpInit(broadcastListenPort int, message_size int, data *Data, slaveListenIn chan *Data, slaveListenOut chan *Data, PrimaryChan chan int, SlaveChan chan int) (err error) {
 	
 	buffer := make([]byte, message_size)
 	var status Status
@@ -392,18 +391,6 @@ func UdpInit(localListenPort int, broadcastListenPort int, message_size int, dat
 		return err
 	}
 
-	//Generating localaddress
-	tempConn, err := net.DialUDP("udp4", nil, baddr)
-	defer tempConn.Close()
-	tempAddr := tempConn.LocalAddr()
-	laddr, err = net.ResolveUDPAddr("udp4", tempAddr.String())
-	laddr.Port = localListenPort
-
-	//Creating local listening connections
-	localListenConn, err := net.ListenUDP("udp4", laddr)
-	if err != nil {
-		return err
-	}
 
 	//Creating listener on broadcast connection
 	broadcastListenConn, err := net.ListenUDP("udp", baddr)

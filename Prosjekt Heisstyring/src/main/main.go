@@ -30,7 +30,6 @@ func main() {
 	//statusIn, statusOut := make(chan *udp.Status), make(chan *udp.Status)
 	PrimaryChan := make(chan int)
 	SlaveChan := make(chan int)
-	timeChan := make(chan time.Time)
 	//SortChan := make(chan int)
 	
 	
@@ -38,7 +37,7 @@ func main() {
 		fmt.Println("Unable to initialize elevator hardware!")
 	return
 	}
-	udp.UdpInit(30169, 39998, 1024, &data, slaveListenIn, slaveListenOut, PrimaryChan,SlaveChan)
+	udp.UdpInit(39998, 1024, &data, slaveListenIn, slaveListenOut, PrimaryChan,SlaveChan)
 	
 	/*if(data.Statuses[udp.GetIndex(udp.GetID(), &data)].CurrentFloor == -1){
 		control.GoToFloor(0,&data)	
@@ -59,7 +58,6 @@ func main() {
 		costIn <- &data
 	}
 
-	timeChan <-time.Now()
 
 	for {
 		//fmt.Println("Uplist?: ", data.Statuses[0].UpList)
@@ -71,7 +69,7 @@ func main() {
 				go udp.PrimaryListen(primListenIn,primListenOut)
 				costIn <- &data
 			case <-SlaveChan:
-				go udp.SlaveUpdate(slaveUpdateIn, slaveUpdateOut,timeChan)
+				go udp.SlaveUpdate(slaveUpdateIn, slaveUpdateOut)
 				slaveUpdateIn <- &data
 			/*	
 			case <-SortChan: // passe på å omsortere Statuses og
@@ -98,8 +96,6 @@ func main() {
 			case <- slaveUpdateOut:
 				slaveListenIn <- &data
 				
-			case <- timeChan:
-				timeChan<- time.Now()
 			//case dataIn := <-dataOut:
 			//	fmt.Println("Er i main og har tatt imot fra????")
 				//dataIn<- temp
