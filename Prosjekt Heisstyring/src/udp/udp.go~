@@ -188,15 +188,16 @@ func PrimaryListen(in chan *Data, out chan *Data) {
 					fmt.Println("Recieved time: ", receivedData.Statuses[GetIndex(GetID(), &receivedData)].LastUpdate)
 					tempData.ID = receivedData.ID
 					tempData.Statuses[GetIndex(tempData.ID,&tempData)] = tempData.Statuses[GetIndex(tempData.ID, &tempData)]
-					tempData.Statuses[GetIndex(tempData.ID, &tempData)].LastUpdate = time.Now() 
+					
+					
 				}
 				
 			}
-			tempData.Statuses[0].LastUpdate = time.Now()
 			
-			//fmt.Println("PrimaryQ: ", tempData.PrimaryQ)
+			
+			fmt.Println("PrimaryQ: ", tempData.PrimaryQ)
 		
-				/*fmt.Println("Delay: ", functions.Delay(tempData.Statuses[GetIndex(tempData.ID, &tempData)].LastUpdate,time.Now()))
+				fmt.Println("Delay: ", functions.Delay(tempData.Statuses[GetIndex(tempData.ID, &tempData)].LastUpdate,time.Now()))
 				if(functions.Delay(time.Now(),tempData.Statuses[GetIndex(tempData.ID, &tempData)].LastUpdate)>5){
 					tempData.Statuses[0].UpList = append(tempData.Statuses[0].UpList, tempData.Statuses[GetIndex(tempData.ID, &tempData)].UpList...)
 					tempData.Statuses[0].DownList = append(tempData.Statuses[0].DownList, tempData.Statuses[GetIndex(tempData.ID, &tempData)].DownList...)
@@ -211,7 +212,7 @@ func PrimaryListen(in chan *Data, out chan *Data) {
 					tempData.Statuses = UpdateStatusList(tempData.Statuses,GetIndex(tempData.ID,&tempData))
 					tempData.PrimaryQ = functions.UpdateList(tempData.PrimaryQ,GetIndex(tempData.ID,&tempData))
 					SendOrderlist(&tempData,1)
-				}*/
+				}
 			
 			
 
@@ -347,7 +348,7 @@ func SlaveUpdate(in chan *Data, out chan *Data) { // chan muligens, bare oppdate
 		data.ID = GetID()
 		
 		fmt.Println("Data.ID før sending",data.ID)
-		data.Statuses[GetIndex(GetID(), data)].LastUpdate = time.Now()
+		
 		if(driver.GetFloorSensorSignal()!=-1){	
 			data.Statuses[GetIndex(GetID(), data)].CurrentFloor = driver.GetFloorSensorSignal()
 		}

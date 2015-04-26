@@ -191,7 +191,7 @@ func CostFunction(in chan *udp.Data, out chan *udp.Data) {
 		//fmt.Println("Lengden til statuses: ", len(data.Statuses))
 		//fmt.Println("PrimaryQ: ", data.PrimaryQ)
 		//fmt.Println("Her er lengden til primaryQ",len(data.Statuses))
-
+		fmt.Println("Her er lastupdate fra main: ",data.Statuses[udp.GetIndex(udp.GetID(),data)].LastUpdate)
 		if len(UpList) == 0 && len(DownList) == 0{
 			if handled == 0{
 				out<- data

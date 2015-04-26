@@ -188,12 +188,12 @@ func PrimaryListen(in chan *Data, out chan *Data) {
 					fmt.Println("Recieved time: ", receivedData.Statuses[GetIndex(GetID(), &receivedData)].LastUpdate)
 					tempData.ID = receivedData.ID
 					tempData.Statuses[GetIndex(tempData.ID,&tempData)] = tempData.Statuses[GetIndex(tempData.ID, &tempData)]
-					tempData.Statuses[GetIndex(tempData.ID, &tempData)].LastUpdate = time.Now() 
+					
 					
 				}
 				
 			}
-			tempData.Statuses[0].LastUpdate = time.Now()
+			
 			
 			fmt.Println("PrimaryQ: ", tempData.PrimaryQ)
 		
@@ -348,7 +348,7 @@ func SlaveUpdate(in chan *Data, out chan *Data) { // chan muligens, bare oppdate
 		data.ID = GetID()
 		
 		fmt.Println("Data.ID før sending",data.ID)
-		data.Statuses[GetIndex(GetID(), data)].LastUpdate = time.Now()
+		
 		if(driver.GetFloorSensorSignal()!=-1){	
 			data.Statuses[GetIndex(GetID(), data)].CurrentFloor = driver.GetFloorSensorSignal()
 		}

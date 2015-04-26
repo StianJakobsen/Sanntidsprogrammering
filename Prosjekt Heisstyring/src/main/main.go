@@ -99,8 +99,8 @@ func main() {
 				//statusIn<- &data.Statuses[udp.GetIndex(udp.GetID(), &Data)]
 				//dataIn<-
 			//case <-statusOut	
-			//default:
-				//fmt.Println("default case")
+			default:
+				data.Statuses[udp.GetIndex(udp.GetID(),&data)].LastUpdate = time.Now()
 		}
 	}
 	
