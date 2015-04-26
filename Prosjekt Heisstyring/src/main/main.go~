@@ -35,7 +35,7 @@ func main() {
 		fmt.Println("Unable to initialize elevator hardware!")
 	return
 	}
-	udp.UdpInit(30169, broadcastPort, 1024, &data, slaveListenIn, slaveListenOut, PrimaryChan,SlaveChan)
+	udp.UdpInit(30169, 39998, 1024, &data, slaveListenIn, slaveListenOut, PrimaryChan,SlaveChan)
 	
 	/*if(data.Statuses[udp.GetIndex(udp.GetID(), &data)].CurrentFloor == -1){
 		control.GoToFloor(0,&data)	
@@ -47,13 +47,13 @@ func main() {
 	go control.GetDestination(&data)
 	go control.ElevatorControl(&data) //statusIn, statusOut)
 	
-	/*
+	
 	if data.Statuses[udp.GetIndex(udp.GetID(), &data)].Primary {
 		fmt.Println("Setter igang PrimaryListen og Costfunction")
 		go udp.PrimaryListen(primListenIn, primListenOut)
 		go control.CostFunction(costIn, costOut)
 		costIn <- &data
-	}*/
+	}
 
 	for {
 		//fmt.Println("Uplist?: ", data.Statuses[0].UpList)
@@ -61,7 +61,7 @@ func main() {
 			case <-PrimaryChan:
 				data.Statuses[udp.GetIndex(udp.GetID(), &data)].Primary = true
 				go control.CostFunction(costIn, costOut) 
-				go udp.PrimaryBroadcast(broadcastPort,&data)
+			//	go udp.PrimaryBroadcast(broadcastPort,&data)
 				go udp.PrimaryListen(primListenIn,primListenOut)
 				costIn <- &data
 			case <-SlaveChan:
