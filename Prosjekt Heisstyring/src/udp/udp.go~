@@ -175,7 +175,7 @@ func PrimaryListen(in chan *Data, out chan *Data) {
 				err = json.Unmarshal(buffer[0:n], &receivedData)
 				checkError(err)
 				if functions.CheckList(tempData.PrimaryQ,receivedData.ID)==false {
-					fmt.Printf("Går inn i Checklisttingeling: %v, ID: %d" receivedData.PrimaryQ, receivedData.ID)
+					fmt.Printf("Går inn i Checklisttingeling: %v, ID: %d", receivedData.PrimaryQ, receivedData.ID)
 					tempData.Statuses = append(tempData.Statuses, receivedData.Statuses[GetIndex(receivedData.ID, &receivedData)])
 					tempData.PrimaryQ = append(tempData.PrimaryQ, receivedData.ID) //PrimaryQ[1:]...)
 					tempData.ID = receivedData.ID
