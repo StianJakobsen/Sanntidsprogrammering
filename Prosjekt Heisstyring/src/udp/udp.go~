@@ -195,7 +195,7 @@ func PrimaryListen(in chan *Data, out chan *Data) {
 			}
 			
 			
-			fmt.Println("PrimaryQ: ", tempData.PrimaryQ)
+			/*fmt.Println("PrimaryQ: ", tempData.PrimaryQ)
 		
 				fmt.Println("Delay: ", functions.Delay(tempData.Statuses[GetIndex(tempData.ID, &tempData)].LastUpdate,time.Now()))
 				if(functions.Delay(time.Now(),tempData.Statuses[GetIndex(tempData.ID, &tempData)].LastUpdate)>5){
@@ -212,7 +212,7 @@ func PrimaryListen(in chan *Data, out chan *Data) {
 					tempData.Statuses = UpdateStatusList(tempData.Statuses,GetIndex(tempData.ID,&tempData))
 					tempData.PrimaryQ = functions.UpdateList(tempData.PrimaryQ,GetIndex(tempData.ID,&tempData))
 					SendOrderlist(&tempData,1)
-				}
+				}*/
 			
 			
 
@@ -394,10 +394,6 @@ func UdpInit(broadcastListenPort int, message_size int, data *Data, slaveListenI
 
 	//Creating listener on broadcast connection
 	broadcastListenConn, err := net.ListenUDP("udp", baddr)
-	if err != nil {
-		localListenConn.Close()
-		return err
-	}
 
 	//go udp_receive_server(localListenConn, broadcastListenConn, message_size receive_ch)
 	//go udp_transmit_server(localListenConn, broadcastListenConn ,send_ch)
