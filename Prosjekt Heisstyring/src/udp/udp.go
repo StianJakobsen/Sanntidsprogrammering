@@ -326,8 +326,8 @@ func SlaveUpdate(in chan *Data, out chan *Data) { // chan muligens, bare oppdate
 		
 		b,_ := json.Marshal(*data)
 		err = json.Unmarshal(buffer[0:len(b)],&temp)
-		fmt.Println("Sender denne UpList: ", data.Statuses[GetIndex(data.ID,&data)].UpList)
-		fmt.Println("Sender denne DownList: ", data.Statuses[GetIndex(data.ID,&tdata)].DownList)
+		fmt.Println("Sender denne UpList: ", data.Statuses[GetIndex(data.ID,data)].UpList)
+		fmt.Println("Sender denne DownList: ", data.Statuses[GetIndex(data.ID,data)].DownList)
 		// Må endre detta til å bare slette når confirmation på ordre kommer, confirmation kan vere samma som lampe lista??
 		//data.Statuses[GetIndex(GetID(), data)].UpList = data.Statuses[GetIndex(GetID(), data)].UpList[:0]
 		//data.Statuses[GetIndex(GetID(), data)].DownList = data.Statuses[GetIndex(GetID(), data)].DownList[:0]
