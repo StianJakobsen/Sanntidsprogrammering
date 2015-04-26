@@ -316,7 +316,7 @@ func SlaveAlive(data *Data) {
 func SlaveUpdate(in chan *Data, out chan *Data) { // chan muligens, bare oppdatere når det er endringar
 	data := <-in
 	out<- data
-	init := 0
+	//init := 0
 	udpAddr, err := net.ResolveUDPAddr("udp", "129.241.187.255:39999")
 	conn, err := net.DialUDP("udp",nil, udpAddr)
 	checkError(err)
@@ -326,9 +326,9 @@ func SlaveUpdate(in chan *Data, out chan *Data) { // chan muligens, bare oppdate
 		data.ID = GetID()
 		fmt.Println("Data.ID før sending",data.ID)
 		
-		if len(data.Statuses[GetIndex(data.ID,data)].UpList)>0||len(data.Statuses[GetIndex(data.ID,data)].DownList)>0||init==0 {
+		//if len(data.Statuses[GetIndex(data.ID,data)].UpList)>0||len(data.Statuses[GetIndex(data.ID,data)].DownList)>0||init==0 {
 		b,_ := json.Marshal(*data)
-		init = 1
+		//init = 1
 		fmt.Println("Sender denne UpList: ", data.Statuses[GetIndex(data.ID,data)].UpList)
 		fmt.Println("Sender denne DownList: ", data.Statuses[GetIndex(data.ID,data)].DownList)
 		// Må endre detta til å bare slette når confirmation på ordre kommer, confirmation kan vere samma som lampe lista??
@@ -340,7 +340,7 @@ func SlaveUpdate(in chan *Data, out chan *Data) { // chan muligens, bare oppdate
 		time.Sleep(50*time.Millisecond) // bytte til bare ved endringar etterhvert
 		if data.Statuses[GetIndex(GetID(), data)].Primary == true {
 			break
-		}
+		//}
 		}
 		out<- data
 	}
