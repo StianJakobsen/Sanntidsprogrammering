@@ -277,7 +277,22 @@ func ListenForPrimary(bconn *net.UDPConn,baddr *net.UDPAddr ,in chan *Data, out 
 		fmt.Println("PrimaryQ: ", temp.PrimaryQ)
 		
 		if(temp.PriBroad == false) {
-			*data = temp	
+			if(len(data.PrimaryQ)!=len(temp.PrimaryQ)){
+				*data = temp
+			}else{
+				for i := 0; i < len(temp.Statuses); i++{
+					if temp.PrimaryQ[i] != GetID(){
+						data.Statuses[i] = temp.Statuses[i]
+					}
+				}
+				data.Statuses[GetIndex(GetID(), &temp)].UpList = append(data.Statuses[GetIndex(GetID(), &temp)].UpList, temp.Statuses[GetIndex(GetID(), &temp)].UpList...)
+				data.Statuses[GetIndex(GetID(), &temp)].DownList = append(data.Statuses[GetIndex(GetID(), &temp)].DownList, temp.Statuses[GetIndex(GetID(), &temp)].DownList...)
+				data.Statuses[GetIndex(GetID(), &temp)].ButtonList = temp.Statuses[GetIndex(GetID(), &temp)].ButtonList
+				data.Statuses[GetIndex(GetID(), &temp)].Running = temp.Statuses[GetIndex(GetID(), &temp)].Running
+				data.Statuses[GetIndex(GetID(), &temp)].OrderList = append(data.Statuses[GetIndex(GetID(), &temp)].OrderList, temp.Statuses[GetIndex(GetID(), &temp)].OrderList...)
+					
+			}
+			
 			
 			fmt.Println("her er primaryQen:", data.PrimaryQ)
 			fmt.Println("Her er lengden til primaryQ",len(data.Statuses))
