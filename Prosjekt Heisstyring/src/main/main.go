@@ -46,6 +46,7 @@ func main() {
 	
 	go control.GetDestination(&data)
 	go control.ElevatorControl(&data) //statusIn, statusOut)
+	
 	/*
 	if data.Statuses[udp.GetIndex(udp.GetID(), &data)].Primary {
 		fmt.Println("Setter igang PrimaryListen og Costfunction")

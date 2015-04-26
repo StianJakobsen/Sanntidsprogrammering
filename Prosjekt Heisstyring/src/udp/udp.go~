@@ -360,7 +360,7 @@ func UdpInit(localListenPort int, broadcastListen int, message_size int, data *D
 		data.PrimaryQ = append(data.PrimaryQ, GetID())
 		data.Statuses = append(data.Statuses, status)
 		data.Statuses[GetIndex(GetID(), data)].Primary = true
-		PrimaryChan <- 1
+		go ChannelFunc(PrimaryChan)
 		//go ChannelFunc(PrimaryChan)
 		go PrimaryBroadcast(broadcastListen,data)
 		
@@ -426,6 +426,28 @@ func UpdateStatusList(OrderList []Status, j int) []Status {
 		}
 	}
 	return temp
+}
+
+func PrintData(data Data) {
+	vektor1 := []string{"-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-"}
+	//vektor2 := vektor1
+	for j:=driver.N_FLOORS;j>-1;j--{	
+		
+		vektor1 = []string{"-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-"}
+		for i:=0;i<len(data.PrimaryQ);i++{
+			if(data.Statuses[i].CurrentFloor == j){
+				vektor1[2+10*i]= "#"
+			}
+		}
+		fmt.Print(j)
+		fmt.Print(": ")
+		fmt.Println(vektor1)
+		
+	//fmt.Println(vektor2)
+	}
+
+
+
 }
 /*
 func SendCommandList() { // Bare sende siste tal for simplicity

@@ -91,6 +91,7 @@ func GoToFloor(floor int, data *udp.Data) { // Lamper for command buttons må le
 				driver.SetDoorOpenLamp(true)				
 				time.Sleep(1500*time.Millisecond)
 				driver.SetDoorOpenLamp(false)
+				data.Statuses[udp.GetIndex(udp.GetID(),data)].CurrentFloor = floor
 				if (floor == 0 || floor == 3) || len(data.Statuses[udp.GetIndex(udp.GetID(), data)].OrderList) == 0 {
 					data.Statuses[udp.GetIndex(udp.GetID(),data)].Running = 0
 				}
@@ -99,6 +100,7 @@ func GoToFloor(floor int, data *udp.Data) { // Lamper for command buttons må le
 				//	(*status).ButtonList = functions.UpdateList((*status).ButtonList,0)
 				//}
 				fmt.Println("Heisen er framme på floor:", floor)
+				udp.PrintData(*data)
 				break
 		} else if floor > driver.GetFloorSensorSignal() && driver.GetFloorSensorSignal() != -1 && floor != -1 {   
 			driver.SetMotorDirection(driver.DIRN_UP)
