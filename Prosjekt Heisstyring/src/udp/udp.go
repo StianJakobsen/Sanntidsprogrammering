@@ -25,7 +25,6 @@ type Status struct {
 	Primary bool
 	ID int
 	LastUpdate time.Time
-	
 	//PrimaryQ [3]string
 	//CommandList []int
 	UpList []int  // slice = slice[:0] for å tømme slicen når sendt til primary
