@@ -195,7 +195,7 @@ func PrimaryListen(in chan *Data, out chan *Data) {
 			}
 			
 			
-			fmt.Println("PrimaryQ: ", tempData.PrimaryQ)
+			/*fmt.Println("PrimaryQ: ", tempData.PrimaryQ)
 		
 				fmt.Println("Delay: ", functions.Delay(tempData.Statuses[GetIndex(tempData.ID, &tempData)].LastUpdate,time.Now()))
 				if(functions.Delay(time.Now(),tempData.Statuses[GetIndex(tempData.ID, &tempData)].LastUpdate)>5){
@@ -212,7 +212,7 @@ func PrimaryListen(in chan *Data, out chan *Data) {
 					tempData.Statuses = UpdateStatusList(tempData.Statuses,GetIndex(tempData.ID,&tempData))
 					tempData.PrimaryQ = functions.UpdateList(tempData.PrimaryQ,GetIndex(tempData.ID,&tempData))
 					SendOrderlist(&tempData,1)
-				}
+				}*/
 			
 			
 
@@ -342,7 +342,7 @@ func SlaveUpdate(in chan *Data, out chan *Data) { // chan muligens, bare oppdate
 	udpAddr, err := net.ResolveUDPAddr("udp", "129.241.187.255:39999")
 	conn, err := net.DialUDP("udp",nil, udpAddr)
 	checkError(err)
-	go UpdateTime(data)
+	
 	for {
 		 //WRITE
 		data = <-in
@@ -513,11 +513,7 @@ func PrintData(data Data) {
 
 
 }
-func UpdateTime(data *Data){
-	for {
-		data.Statuses[GetIndex(GetID(),data)].LastUpdate = time.Now()
-	}
-}
+
 /*
 func SendCommandList() { // Bare sende siste tal for simplicity
 	udpAddr, err := net.ResolveUDPAddr("udp", "129.241.187.255:30169") // Broadcast (endre ip nettverket du sitter på)
