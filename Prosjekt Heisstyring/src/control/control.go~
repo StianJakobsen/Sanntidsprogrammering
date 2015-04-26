@@ -189,7 +189,8 @@ func CostFunction(in chan *udp.Data, out chan *udp.Data) {
 		handled = 0
 		//fmt.Println("status.UpList i CostFunction: ",(*data).Statuses[udp.GetIndex((*data).PrimaryQ[0], data)].UpList)
 		//fmt.Println("Lengden til statuses: ", len(data.Statuses))
-		fmt.Println("PrimaryQ: ", data.PrimaryQ)
+		//fmt.Println("PrimaryQ: ", data.PrimaryQ)
+		//fmt.Println("Her er lengden til primaryQ",len(data.Statuses))
 
 		if len(UpList) == 0 && len(DownList) == 0{
 			if handled == 0{
@@ -258,6 +259,7 @@ func CostFunction(in chan *udp.Data, out chan *udp.Data) {
 		}
 		for i := 0; i < len(data.PrimaryQ) && handled == 0; i++ { // Heis i etasjen over og på veg nedover
 			if data.Statuses[i].CurrentFloor == DownList[down]+1 && data.Statuses[i].Running == -1 && handled != 1 {
+				fmt.Printf("Sender heis %d til: %d \n", data.Statuses[i].ID, DownList[down]) 
 				data.ButtonList[2+DownList[down]] =1
 				data.Statuses[i].OrderList = append(data.Statuses[i].OrderList,DownList[down])
 				fmt.Println("control 370: Heis i etasjen over og på vei nedover. Downlist:", DownList)

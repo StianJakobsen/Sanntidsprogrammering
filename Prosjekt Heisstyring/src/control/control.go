@@ -189,8 +189,8 @@ func CostFunction(in chan *udp.Data, out chan *udp.Data) {
 		handled = 0
 		//fmt.Println("status.UpList i CostFunction: ",(*data).Statuses[udp.GetIndex((*data).PrimaryQ[0], data)].UpList)
 		//fmt.Println("Lengden til statuses: ", len(data.Statuses))
-		fmt.Println("PrimaryQ: ", data.PrimaryQ)
-		fmt.Println("Her er lengden til primaryQ",len(data.Statuses))
+		//fmt.Println("PrimaryQ: ", data.PrimaryQ)
+		//fmt.Println("Her er lengden til primaryQ",len(data.Statuses))
 
 		if len(UpList) == 0 && len(DownList) == 0{
 			if handled == 0{
@@ -259,6 +259,7 @@ func CostFunction(in chan *udp.Data, out chan *udp.Data) {
 		}
 		for i := 0; i < len(data.PrimaryQ) && handled == 0; i++ { // Heis i etasjen over og på veg nedover
 			if data.Statuses[i].CurrentFloor == DownList[down]+1 && data.Statuses[i].Running == -1 && handled != 1 {
+				fmt.Printf("Sender heis %d til: %d \n", data.Statuses[i].ID, DownList[down]) 
 				data.ButtonList[2+DownList[down]] =1
 				data.Statuses[i].OrderList = append(data.Statuses[i].OrderList,DownList[down])
 				fmt.Println("control 370: Heis i etasjen over og på vei nedover. Downlist:", DownList)
@@ -282,6 +283,7 @@ func CostFunction(in chan *udp.Data, out chan *udp.Data) {
 		}
 		for i := 0; i < len(data.PrimaryQ) && handled == 0; i++ { // Heis i etasjen over og står stille
 			if data.Statuses[i].CurrentFloor == DownList[down]+1 && data.Statuses[i].Running == 0 && handled != 1 {
+				fmt.Printf("Sender heis %d til: %d \n", data.Statuses[i].ID, DownList[down]) 
 				data.ButtonList[2+DownList[down]] =1
 				data.Statuses[i].OrderList = append(data.Statuses[i].OrderList,DownList[down])
 				data.Statuses[i].OrderList = functions.SortDown(data.Statuses[i].OrderList)
@@ -305,6 +307,7 @@ func CostFunction(in chan *udp.Data, out chan *udp.Data) {
 		}
 		for i := 0; i < len(data.PrimaryQ) && handled == 0; i++ { // Heis på veg nedover
 			if data.Statuses[i].CurrentFloor > DownList[down] && data.Statuses[i].Running == -1  && handled != 1{
+				fmt.Printf("Sender heis %d til: %d \n", data.Statuses[i].ID, DownList[down]) 
 				data.ButtonList[2+DownList[down]] =1
 				data.Statuses[i].OrderList = append(data.Statuses[i].OrderList,DownList[down])
 				for j := 0; j < len(data.PrimaryQ); j++{
@@ -328,6 +331,7 @@ func CostFunction(in chan *udp.Data, out chan *udp.Data) {
 
 		for i := 0; i < len(data.PrimaryQ) && handled == 0; i++ {
 			if data.Statuses[i].Running == 0 {
+				fmt.Printf("Sender heis %d til: %d \n", data.Statuses[i].ID, DownList[down]) 
 				data.Statuses[i].OrderList = append(data.Statuses[i].OrderList,DownList[down])
 				fmt.Println("control 437: heis står stille generelt. Downlist:", DownList)
 				data.ButtonList[2+DownList[down]] =1
@@ -366,6 +370,7 @@ for up:=0; up<len(UpList);up++ {
 		}
 		for i:=0;i<len(data.PrimaryQ) && handled==0;i++{
 			if UpList[up] == data.Statuses[i].CurrentFloor && data.Statuses[i].Running == 0 {
+				fmt.Printf("Sender heis %d til: %d \n", data.Statuses[i].ID, UpList[up]) 
 				data.ButtonList[UpList[up]]=1
 				data.Statuses[i].OrderList = append(data.Statuses[i].OrderList,UpList[up])
 				data.Statuses[i].OrderList = functions.SortUp(data.Statuses[i].OrderList)
@@ -389,6 +394,7 @@ for up:=0; up<len(UpList);up++ {
 		}
 		for i := 0; i < len(data.PrimaryQ) && handled == 0; i++ {
 			if data.Statuses[i].CurrentFloor == UpList[up]-1 && data.Statuses[i].Running == 1 && handled != 1 {
+				fmt.Printf("Sender heis %d til: %d \n", data.Statuses[i].ID, UpList[up]) 
 				data.ButtonList[UpList[up]]=1
 				data.Statuses[i].OrderList = append(data.Statuses[i].OrderList,UpList[up])
 				data.Statuses[i].OrderList = functions.SortUp(data.Statuses[i].OrderList)
@@ -411,6 +417,7 @@ for up:=0; up<len(UpList);up++ {
 		}
 		for i := 0; i < len(data.PrimaryQ) && handled == 0; i++ {
 			if data.Statuses[i].CurrentFloor == UpList[up]-1 && data.Statuses[i].Running == 0 && handled != 1 {
+				fmt.Printf("Sender heis %d til: %d \n", data.Statuses[i].ID, UpList[up]) 
 				data.ButtonList[UpList[up]]=1
 				data.Statuses[i].OrderList = append(data.Statuses[i].OrderList,UpList[up])
 				data.Statuses[i].OrderList = functions.SortUp(data.Statuses[i].OrderList)
@@ -433,6 +440,7 @@ for up:=0; up<len(UpList);up++ {
 		}
 		for i := 0; i < len(data.PrimaryQ) && handled == 0; i++ {
 			if data.Statuses[i].CurrentFloor < UpList[up] && data.Statuses[i].Running == 1  && handled != 1{
+				fmt.Printf("Sender heis %d til: %d \n", data.Statuses[i].ID, UpList[up]) 
 				data.ButtonList[UpList[up]]=1
 				data.Statuses[i].OrderList = append(data.Statuses[i].OrderList,UpList[up])
 				data.Statuses[i].OrderList = functions.SortUp(data.Statuses[i].OrderList)
@@ -459,7 +467,7 @@ for up:=0; up<len(UpList);up++ {
 			fmt.Println("RUNNING RUNNING RUNNING",data.Statuses[i].Running  )
 			if data.Statuses[i].Running == 0 {
 				data.Statuses[i].OrderList = append(data.Statuses[i].OrderList,UpList[up])
-				
+				fmt.Printf("Sender heis %d til: %d \n", data.Statuses[i].ID, UpList[up]) 
 				fmt.Println("control 473: heisen står stille. UpList:", UpList)
 				data.ButtonList[UpList[up]]=1
 				if UpList[up] > data.Statuses[i].CurrentFloor{
