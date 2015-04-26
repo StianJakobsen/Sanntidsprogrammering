@@ -112,13 +112,13 @@ func PrimaryBroadcast(baddr *net.UDPAddr, data *Data) { // IMALIVE, oppdatere ba
 
 func SendOrderlist(data *Data,index int) { // IMALIVE
 	//fmt.Println("Går inn og SENDER ORDRER!")
-	data.PriBroad = false
 	udpAddr, err := net.ResolveUDPAddr("udp", "129.241.187.255:39998")//+strconv.Itoa(data.PrimaryQ[index])+":39998")
 	bconn, err := net.DialUDP("udp",nil, udpAddr)
 	checkError(err)
 	// WRITE
 	fmt.Print("ORDERLIST SENT: ", data.Statuses[index].OrderList)
 	fmt.Println("                                  PrimeryQ: ", data.PrimaryQ)
+	data.PriBroad = false
 	b,_ := json.Marshal(data) // nok å bare sende en gang?
 	bconn.Write(b)		
 	checkError(err)
@@ -186,6 +186,7 @@ func PrimaryListen(in chan *Data, out chan *Data) {
 			}
 			tempData.Statuses[0].LastUpdate = time.Now()
 			
+			fmt.Println("PrimaryQ: ", tempData.PrimaryQ)
 		
 				/*fmt.Println("Delay: ", functions.Delay(tempData.Statuses[GetIndex(tempData.ID, &tempData)].LastUpdate,time.Now()))
 				if(functions.Delay(time.Now(),tempData.Statuses[GetIndex(tempData.ID, &tempData)].LastUpdate)>5){
@@ -247,7 +248,7 @@ func ListenForPrimary(bconn *net.UDPConn,baddr *net.UDPAddr ,in chan *Data, out 
 		fmt.Println("Her er gammel OrderList: ", data.Statuses[GetIndex(GetID(),data)].OrderList)	
 		bconn.SetReadDeadline(time.Now().Add(5*time.Second))		
 		n, err := bconn.Read(buffer)
-		fmt.Println("Størrelsen på mottatt data: ", n)
+		//fmt.Println("Størrelsen på mottatt data: ", n)
 		if err != nil && data.PrimaryQ[1] == GetID() {
 			fmt.Println("Mottar ikke meldinger fra primary lenger, tar over")
 			//fiks primary sin orderlist
@@ -272,6 +273,8 @@ func ListenForPrimary(bconn *net.UDPConn,baddr *net.UDPAddr ,in chan *Data, out 
 		}
 		//Data = buffer
 		err = json.Unmarshal(buffer[0:n], &temp)
+		fmt.Println("PrimaryQ: ", temp.PrimaryQ)
+		
 		if(temp.PriBroad == false) {
 			*data = temp	
 			fmt.Println("her er primaryQen:", data.PrimaryQ)
