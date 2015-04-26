@@ -182,7 +182,7 @@ func PrimaryListen(in chan *Data, out chan *Data) {
 			}
 			tempData.Statuses[0].LastUpdate = time.Now()
 			
-			for i:=1;i<len(tempData.PrimaryQ);i++{
+		
 				fmt.Println("Delay: ", functions.Delay(receivedData.Statuses[GetIndex(receivedData.ID, &receivedData)].LastUpdate,time.Now()))
 				if(functions.Delay(time.Now(),receivedData.Statuses[GetIndex(receivedData.ID, &receivedData)].LastUpdate)>5){
 					tempData.Statuses[0].UpList = append(tempData.Statuses[0].UpList, receivedData.Statuses[GetIndex(receivedData.PrimaryQ[i], &receivedData)].UpList...)
@@ -199,7 +199,7 @@ func PrimaryListen(in chan *Data, out chan *Data) {
 					tempData.PrimaryQ = functions.UpdateList(tempData.PrimaryQ,i)
 					i--
 				}
-			}	
+			
 			
 			//if update == true{
 			//	out <- data
@@ -316,7 +316,7 @@ func SlaveUpdate(in chan *Data, out chan *Data) { // chan muligens, bare oppdate
 		data = <-in
 		data.ID = GetID()
 		fmt.Println("Data.ID før sending",data.ID)
-		data.Statuses[GetIndex(GetID(), data)].LastUpdate = time.Now()
+		
 		
 		b,_ := json.Marshal(*data)
 		// Må endre detta til å bare slette når confirmation på ordre kommer, confirmation kan vere samma som lampe lista??

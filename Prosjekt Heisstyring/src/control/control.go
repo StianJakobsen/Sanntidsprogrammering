@@ -87,7 +87,7 @@ func GoToFloor(floor int, data *udp.Data) { // Lamper for command buttons må le
 
 		driver.SetFloorIndicator(driver.GetFloorSensorSignal())
 		if floor == driver.GetFloorSensorSignal() {
-				
+				data.Statuses[udp.GetIndex(udp.GetID(), data)].LastUpdate = time.Now()
 				driver.SetFloorIndicator(floor)
 				driver.SetButtonLamp(2,floor,0)
 				driver.SetMotorDirection(driver.DIRN_STOP)
@@ -100,6 +100,7 @@ func GoToFloor(floor int, data *udp.Data) { // Lamper for command buttons må le
 					data.Statuses[udp.GetIndex(udp.GetID(),data)].Running = 0
 					//driver.SetButtonLamp(0,floor,0)
 					//driver.SetButtonLamp(1,floor,0)
+					
 					if(floor == 3){
 						data.ButtonList[5] = 0	
 					}else if(floor == 0){
@@ -126,10 +127,12 @@ func GoToFloor(floor int, data *udp.Data) { // Lamper for command buttons må le
 				break
 		} else if floor > driver.GetFloorSensorSignal() && driver.GetFloorSensorSignal() != -1 && floor != -1 {   
 			driver.SetMotorDirection(driver.DIRN_UP)
+			data.Statuses[udp.GetIndex(udp.GetID(), data)].LastUpdate = time.Now()
 			data.Statuses[udp.GetIndex(udp.GetID(),data)].Running = 1
 
 		} else if floor < driver.GetFloorSensorSignal() && driver.GetFloorSensorSignal() != -1 && floor != -1{
 			driver.SetMotorDirection(driver.DIRN_DOWN)
+			data.Statuses[udp.GetIndex(udp.GetID(), data)].LastUpdate = time.Now()
 			data.Statuses[udp.GetIndex(udp.GetID(),data)].Running = -1
 
 		}/*else if data.Statuses[udp.GetIndex(udp.GetID(),data)].CurrentFloor == -1{
@@ -151,7 +154,9 @@ func ElevatorControl(data *udp.Data) {
 	//temp = temp + 0
 	
 	for {
-
+		if(len(data.Statuses[udp.GetIndex(udp.GetID(), data)].OrderList) == 0){
+			data.Statuses[udp.GetIndex(udp.GetID(), data)].LastUpdate = time.Now()
+		}
 		//&&data.Statuses[udp.GetIndex(udp.GetID(),data)] = <-data.Statuses[udp.GetIndex(udp.GetID(),data)]In
 	
 		//if driver.GetFloorSensorSignal() != -1 {

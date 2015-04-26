@@ -316,7 +316,7 @@ func SlaveUpdate(in chan *Data, out chan *Data) { // chan muligens, bare oppdate
 		data = <-in
 		data.ID = GetID()
 		fmt.Println("Data.ID før sending",data.ID)
-		data.Statuses[GetIndex(GetID(), data)].LastUpdate = time.Now()
+		
 		
 		b,_ := json.Marshal(*data)
 		// Må endre detta til å bare slette når confirmation på ordre kommer, confirmation kan vere samma som lampe lista??
