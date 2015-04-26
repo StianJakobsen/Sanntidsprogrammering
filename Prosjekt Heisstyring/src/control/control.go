@@ -87,10 +87,12 @@ func GoToFloor(floor int, data *udp.Data) { // Lamper for command buttons må le
 		driver.SetFloorIndicator(driver.GetFloorSensorSignal())
 		if floor == driver.GetFloorSensorSignal() {
 				driver.SetFloorIndicator(floor)
+				driver.SetButtonLamp(2,floor,0)
 				driver.SetMotorDirection(driver.DIRN_STOP)
 				driver.SetDoorOpenLamp(true)				
 				time.Sleep(1500*time.Millisecond)
 				driver.SetDoorOpenLamp(false)
+				
 				data.Statuses[udp.GetIndex(udp.GetID(),data)].CurrentFloor = floor
 				if (floor == 0 || floor == 3) || len(data.Statuses[udp.GetIndex(udp.GetID(), data)].OrderList) == 0 {
 					data.Statuses[udp.GetIndex(udp.GetID(),data)].Running = 0
@@ -114,6 +116,7 @@ func GoToFloor(floor int, data *udp.Data) { // Lamper for command buttons må le
 		}*/
 		if driver.GetFloorSensorSignal() != -1{
 			data.Statuses[udp.GetIndex(udp.GetID(),data)].CurrentFloor = driver.GetFloorSensorSignal()
+			driver.SetButtonLamp(2,data.Statuses[udp.GetIndex(udp.GetID(),data)].CurrentFloor,0)
 		}	
 	}
 }
@@ -275,23 +278,30 @@ func GetDestination(data *udp.Data) { //returnerer bare button, orderlist oppdat
 						fmt.Println("er")
 						data.Statuses[udp.GetIndex(udp.GetID(),data)].OrderList = append(data.Statuses[udp.GetIndex(udp.GetID(),data)].OrderList, floor)
 						data.Statuses[udp.GetIndex(udp.GetID(),data)].OrderList = functions.SortUp(data.Statuses[udp.GetIndex(udp.GetID(),data)].OrderList)
+						driver.SetButtonLamp(2,floor,1)
 					} else if data.Statuses[udp.GetIndex(udp.GetID(),data)].CurrentFloor > floor && data.Statuses[udp.GetIndex(udp.GetID(),data)].Running == -1{
 						fmt.Println("er eg")
 						data.Statuses[udp.GetIndex(udp.GetID(),data)].OrderList = append(data.Statuses[udp.GetIndex(udp.GetID(),data)].OrderList, floor)
 						data.Statuses[udp.GetIndex(udp.GetID(),data)].OrderList = functions.SortDown(data.Statuses[udp.GetIndex(udp.GetID(),data)].OrderList)
+						driver.SetButtonLamp(2,floor,1)
 					} else if data.Statuses[udp.GetIndex(udp.GetID(),data)].CurrentFloor < floor && data.Statuses[udp.GetIndex(udp.GetID(),data)].Running == 0{
 						fmt.Println("er eg her")
 						data.Statuses[udp.GetIndex(udp.GetID(),data)].OrderList = append(data.Statuses[udp.GetIndex(udp.GetID(),data)].OrderList, floor)
 						data.Statuses[udp.GetIndex(udp.GetID(),data)].Running = 1
+						driver.SetButtonLamp(2,floor,1)
 					} else if data.Statuses[udp.GetIndex(udp.GetID(),data)].CurrentFloor > floor && data.Statuses[udp.GetIndex(udp.GetID(),data)].Running == 0{
 						fmt.Println("er eg her?")
 						data.Statuses[udp.GetIndex(udp.GetID(),data)].OrderList = append(data.Statuses[udp.GetIndex(udp.GetID(),data)].OrderList, floor)
 						data.Statuses[udp.GetIndex(udp.GetID(),data)].Running = -1
+						driver.SetButtonLamp(2,floor,1)
 					} else if data.Statuses[udp.GetIndex(udp.GetID(),data)].CurrentFloor == floor && data.Statuses[udp.GetIndex(udp.GetID(),data)].Running == 0{
 						fmt.Println("er eg her!!!!!")
 						data.Statuses[udp.GetIndex(udp.GetID(),data)].OrderList = append(data.Statuses[udp.GetIndex(udp.GetID(),data)].OrderList, floor)
 						data.Statuses[udp.GetIndex(udp.GetID(),data)].Running = 0
+						driver.SetButtonLamp(2,floor,1)
 					}
+				} else if driver.GetButtonSignal(2,floor) == 1 && functions.CheckList(data.Statuses[udp.GetIndex(udp.GetID(),data)].OrderList, floor) {
+					driver.SetButtonLamp(2,floor,1)
 				}
 				/*
 				}else if driver.GetButtonSignal(2,floor) == 1 && len(data.Statuses[udp.GetIndex(udp.GetID(),data)].CommandList) == 0{

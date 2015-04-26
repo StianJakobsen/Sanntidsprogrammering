@@ -19,7 +19,7 @@ func main() {
 	fmt.Println("FINN ET BEDRE STED FOR RUNNING=0 I GÅR")
 	runtime.GOMAXPROCS(runtime.NumCPU())
 	fmt.Println(udp.GetID())
-	broadcastPort := 39998	
+	
 	//floorChan := make(chan int)
 	var data udp.Data
 	costIn, costOut := make(chan *udp.Data), make(chan *udp.Data)

@@ -236,10 +236,11 @@ func ListenForPrimary(bconn *net.UDPConn,baddr *net.UDPAddr ,in chan *Data, out 
 			fmt.Println("Mottar ikke meldinger fra primary lenger, tar over")
 			data.PrimaryQ = data.PrimaryQ[1:] // UpdateList(data.PrimaryQ,0)
 			data.Statuses = data.Statuses[1:]
-			//go PrimaryBroadcast(baddr, data)
+			go PrimaryBroadcast(baddr, data)
 			//go PrimaryListen(data, SortChan)
 			// SendOrderlist(Data)
-			PrimaryChan<- 1
+			//PrimaryChan <-
+			go ChannelFunc(PrimaryChan)
 			break
 		}
 		//Data = buffer
