@@ -43,7 +43,7 @@ func main() {
 	fmt.Println("Ferdig med å initialisere")	
 
 	fmt.Println("MIN INDEX ER: ", udp.GetIndex(udp.GetID(), &data))
-	
+	time.Sleep(1000*time.Millisecond)
 	go control.GetDestination(&data)
 	go control.ElevatorControl(&data) //statusIn, statusOut)
 	go control.LampControl(&data)
