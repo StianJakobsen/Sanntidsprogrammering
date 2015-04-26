@@ -317,7 +317,7 @@ func SlaveUpdate(in chan *Data, out chan *Data) { // chan muligens, bare oppdate
 	data := <-in
 	out<- data
 	init := 0
-	udpAddr, err := net.ResolveUDPAddr("udp", "129.241.187."+ strconv.Itoa(data.PrimaryQ[0]) + ":39999")
+	udpAddr, err := net.ResolveUDPAddr("udp", "129.241.187.255:39999")
 	conn, err := net.DialUDP("udp",nil, udpAddr)
 	checkError(err)
 	for {
