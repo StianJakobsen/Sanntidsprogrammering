@@ -177,7 +177,7 @@ func PrimaryListen(in chan *Data, out chan *Data) {
 					tempData.Statuses = append(tempData.Statuses, temp.Statuses[GetIndex(temp.ID, &temp)])
 					tempData.PrimaryQ = append(tempData.PrimaryQ, temp.PrimaryQ[len(temp.Statuses)-1]) //PrimaryQ[1:]...)
 				}else{
-					tempData.Statuses[GetIndex(temp.ID,tempData)] = temp.Statuses[GetIndex(temp.ID, temp)]
+					tempData.Statuses[GetIndex(temp.ID,&tempData)] = temp.Statuses[GetIndex(temp.ID, &temp)]
 				}
 			}
 			tempData.Statuses[0].LastUpdate = time.Now()
