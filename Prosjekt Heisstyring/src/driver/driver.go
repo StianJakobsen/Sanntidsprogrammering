@@ -55,8 +55,16 @@ func InitElevator() int { // sjekke denna
 	SetDoorOpenLamp(false)
 	if GetFloorSensorSignal() != -1 {
 		SetFloorIndicator(GetFloorSensorSignal())
+	}else{
+		SetMotorDirection(DIRN_DOWN)
+		for{
+			if GetFloorSensorSignal() != -1{
+			SetMotorDirection(DIRN_STOP)
+			return 1
+			}
+		}
 	} 
-
+	
 	// + noko greiar herat
 	return 1
 }
