@@ -1,19 +1,9 @@
 //Sanntidsprogrammering!!
 package functions
-import (//"fmt" // Using '.' to avoid prefixing functions with their package names
-		// This is probably not a good idea for large projects...
-	//"runtime"
-	//"time"
-	//"net"
-	//"bufio"
-	//"os"
-	//"strconv"
-	//"driver"
-	//"sort"
-	//"encoding/json"
-	"sort"
+import (
 	"time"
 	"math"
+	"sort"
 )
 
 
@@ -65,25 +55,7 @@ func SortDown(DownList []int)  []int{
 	DownList = SortUp(DownList)
 	sort.Sort(sort.Reverse(sort.IntSlice(DownList)))
 	return DownList
-	/*
-	sort.Ints(DownList)
-	if(len(DownList)>0){ 
-		temp := make([]int,1)
-		//fmt.Println("DownList i SortDown: ",DownList)
-		temp[0] = DownList[len(DownList)-1]
-		counter := 0
-		for i:= (len(DownList)-1); i>=1; i-- {
-			
-			if DownList[i] < temp[counter] {
-				counter ++
-				temp = append(temp,DownList[i])
-			}
-		}
-		return temp
-	}else{
-		return DownList
-	}
-	*/
+	
 } 
 func Delay(SlaveTime time.Time, PrimeTime time.Time) int{
 	temp := SlaveTime.Sub(PrimeTime)
