@@ -175,11 +175,13 @@ func PrimaryListen(in chan *Data, out chan *Data) {
 				err = json.Unmarshal(buffer[0:n], &receivedData)
 				checkError(err)
 				fmt.Printf("Går inn i Checklisttingeling: %v, ID: %d\n", receivedData.PrimaryQ, receivedData.ID)
+				
 				if functions.CheckList(tempData.PrimaryQ,receivedData.ID)==false {
 					fmt.Printf("Går inn i Checklisttingeling: %v, ID: %d", receivedData.PrimaryQ, receivedData.ID)
 					tempData.Statuses = append(tempData.Statuses, receivedData.Statuses[GetIndex(receivedData.ID, &receivedData)])
 					tempData.PrimaryQ = append(tempData.PrimaryQ, receivedData.ID) //PrimaryQ[1:]...)
 					tempData.ID = receivedData.ID
+					SendOrderlist(tempData,1)
 				}else{
 					
 					tempData.ID = receivedData.ID
@@ -279,7 +281,7 @@ func ListenForPrimary(bconn *net.UDPConn,baddr *net.UDPAddr ,in chan *Data, out 
 		
 		if(temp.PriBroad == false) {
 			*data = temp	
-			SendOrderlist(data,1)
+			
 			fmt.Println("her er primaryQen:", data.PrimaryQ)
 			fmt.Println("Her er ny OrderList: ", data.Statuses[GetIndex(GetID(),data)].OrderList)
 			fmt.Println("Index: ", GetIndex(GetID(),data))
