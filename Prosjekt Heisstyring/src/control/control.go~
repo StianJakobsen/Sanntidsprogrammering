@@ -154,8 +154,9 @@ func ElevatorControl(data *udp.Data) {
 	//temp = temp + 0
 	
 	for {
-		if(len(data.Statuses[GetIndex(GetID(), data)].OrderList) == 0){
-			data.Statuses[GetIndex(GetID(), data)].LastUpdate = time.Now()
+		if(len(data.Statuses[udp.GetIndex(udp.GetID(), data)].OrderList) == 0){
+			fmt.Println("Setter ny lstupdate")
+			data.Statuses[udp.GetIndex(udp.GetID(), data)].LastUpdate = time.Now()
 		}
 		//&&data.Statuses[udp.GetIndex(udp.GetID(),data)] = <-data.Statuses[udp.GetIndex(udp.GetID(),data)]In
 	
