@@ -36,7 +36,7 @@ type Status struct {
 type Data struct {
 	//Status Status
 	//Timestamp???????
-	
+	ButtonList []int // [up0,up1,up2,dwn1,dwn2,dwn3]... [up/down + floor]
 	PriBroad bool
 	ID int
 	Statuses []Status // Oppdatere den her å i UdpInit()
@@ -356,6 +356,7 @@ func UdpInit(localListenPort int, broadcastListenPort int, message_size int, dat
 	broadcastListenConn.SetReadDeadline(time.Now().Add(3*time.Second))
 	n, err := broadcastListenConn.Read(buffer)
 	if err != nil {
+		data.ButtonList = []int{0,0,0,0,0,0}
 		fmt.Println("Tar over som primary!")
 		data.PrimaryQ = append(data.PrimaryQ, GetID())
 		data.Statuses = append(data.Statuses, status)

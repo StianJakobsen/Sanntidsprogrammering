@@ -25,7 +25,6 @@ type Status struct {
 	Primary bool
 	ID int
 	LastUpdate time.Time
-	
 	//PrimaryQ [3]string
 	//CommandList []int
 	UpList []int  // slice = slice[:0] for å tømme slicen når sendt til primary
@@ -37,7 +36,7 @@ type Status struct {
 type Data struct {
 	//Status Status
 	//Timestamp???????
-	
+	ButtonList []int
 	PriBroad bool
 	ID int
 	Statuses []Status // Oppdatere den her å i UdpInit()
@@ -240,7 +239,7 @@ func ListenForPrimary(bconn *net.UDPConn,baddr *net.UDPAddr ,in chan *Data, out 
 			//go PrimaryListen(data, SortChan)
 			// SendOrderlist(Data)
 			//PrimaryChan <-
-			go channelFunc(PrimaryChan)
+			go ChannelFunc(PrimaryChan)
 			break
 		}
 		//Data = buffer
@@ -357,6 +356,7 @@ func UdpInit(localListenPort int, broadcastListenPort int, message_size int, dat
 	broadcastListenConn.SetReadDeadline(time.Now().Add(3*time.Second))
 	n, err := broadcastListenConn.Read(buffer)
 	if err != nil {
+		data.ButtonList = []int{0,0,0,0,0,0}
 		fmt.Println("Tar over som primary!")
 		data.PrimaryQ = append(data.PrimaryQ, GetID())
 		data.Statuses = append(data.Statuses, status)
