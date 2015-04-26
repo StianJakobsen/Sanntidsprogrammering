@@ -247,6 +247,7 @@ func ListenForPrimary(bconn *net.UDPConn,baddr *net.UDPAddr ,in chan *Data, out 
 		fmt.Println("Her er gammel OrderList: ", data.Statuses[GetIndex(GetID(),data)].OrderList)	
 		bconn.SetReadDeadline(time.Now().Add(5*time.Second))		
 		n, err := bconn.Read(buffer)
+		fmt.Println("Størrelsen på mottatt data: ", n)
 		if err != nil && data.PrimaryQ[1] == GetID() {
 			fmt.Println("Mottar ikke meldinger fra primary lenger, tar over")
 			//fiks primary sin orderlist
