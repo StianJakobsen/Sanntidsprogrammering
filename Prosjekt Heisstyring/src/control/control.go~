@@ -338,14 +338,14 @@ func CostFunction(in chan *udp.Data, out chan *udp.Data) {
 		}
 		for i := 0; i < len(data.PrimaryQ) && handled == 0; i++ { // Heis i samme floor, og står stille
 			if DownList[down] == data.Statuses[i].CurrentFloor && data.Statuses[i].Running == 0 {
-
+				
 				data.Statuses[i].OrderList = append(data.Statuses[i].OrderList,DownList[down])
 				data.Statuses[i].OrderList = functions.SortDown(data.Statuses[i].OrderList)
 				data.Statuses[i].Running = 0
 				fmt.Println("control 280: Heis i samma floor og står stille. Downlist:", DownList)
 				DownList = functions.UpdateList(DownList,down) //Må modifiseres
 				data.Statuses[i].DownList = functions.UpdateList(data.Statuses[i].DownList, down) 
-				data.Statuses[i].ButtonList = append(data.Statuses[i].ButtonList,1)
+				data.ButtonList[2+DownList[down]] =1
 				if i != 0 {
 					udp.SendOrderlist(data,i) // , i)
 				}else{
@@ -364,6 +364,7 @@ func CostFunction(in chan *udp.Data, out chan *udp.Data) {
 				DownList = functions.UpdateList(DownList,down)
 				data.Statuses[i].DownList = functions.UpdateList(data.Statuses[i].DownList, down)
 				data.Statuses[i].ButtonList = append(data.Statuses[i].ButtonList,1)
+				data.ButtonList[2+DownList[down]] =1
 				if i != 0 {
 					udp.SendOrderlist(data, i) // , i)
 				}
@@ -380,6 +381,7 @@ func CostFunction(in chan *udp.Data, out chan *udp.Data) {
 				DownList = functions.UpdateList(DownList,down)
 				data.Statuses[i].DownList = functions.UpdateList(data.Statuses[i].DownList, down)
 				data.Statuses[i].ButtonList = append(data.Statuses[i].ButtonList,1)
+				data.ButtonList[2+DownList[down]] =1
 				if i != 0 {
 					udp.SendOrderlist(data,i) // , i)
 				}
@@ -395,6 +397,7 @@ func CostFunction(in chan *udp.Data, out chan *udp.Data) {
 				fmt.Println("control 398: Heis på vei nedover og er over floor. Downlist:", DownList)
 				data.Statuses[i].OrderList = functions.SortDown(data.Statuses[i].OrderList)
 				data.Statuses[i].ButtonList = append(data.Statuses[i].ButtonList,1)
+				data.ButtonList[2+DownList[down]] =1
 				if i != 0 {
 					udp.SendOrderlist(data,i) // , i)
 				}
@@ -407,6 +410,7 @@ func CostFunction(in chan *udp.Data, out chan *udp.Data) {
 			if data.Statuses[i].Running == 0 {
 				data.Statuses[i].OrderList = append(data.Statuses[i].OrderList,DownList[down])
 				fmt.Println("control 437: heis står stille generelt. Downlist:", DownList)
+				data.ButtonList[2+DownList[down]] =1
 				if DownList[down] > data.Statuses[i].CurrentFloor{
 					data.Statuses[i].OrderList = functions.SortUp(data.Statuses[i].OrderList)
 					data.Statuses[i].Running = 1
@@ -450,6 +454,7 @@ for up:=0; up<len(UpList);up++ {
 				data.Statuses[i].ButtonList = append(data.Statuses[i].ButtonList,0)
 				UpList = functions.UpdateList(UpList,up) //Må modifiseres
 				data.Statuses[i].UpList = functions.UpdateList(data.Statuses[i].UpList, up)
+				data.
 				if i != 0 {
 					udp.SendOrderlist(data,i) // , i)
 				}
