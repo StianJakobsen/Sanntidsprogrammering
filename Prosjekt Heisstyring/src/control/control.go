@@ -187,7 +187,7 @@ func CostFunction(in chan *udp.Data, out chan *udp.Data) {
 	for {
 		
 		handled = 0
-		fmt.Println("Her er lastupdate fra main: ",data.Statuses[udp.GetIndex(udp.GetID(),data)].LastUpdate)
+		time.Sleep(150*time.Millisecond)
 		if len(UpList) == 0 && len(DownList) == 0{
 			if handled == 0{
 				out<- data

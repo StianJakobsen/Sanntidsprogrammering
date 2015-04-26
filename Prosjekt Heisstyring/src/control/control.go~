@@ -185,18 +185,14 @@ func CostFunction(in chan *udp.Data, out chan *udp.Data) {
 	var data *udp.Data
 	data = <-in
 	for {
-		//fmt.Println("control 243, handled: ",handled)
+		
 		handled = 0
-		//fmt.Println("status.UpList i CostFunction: ",(*data).Statuses[udp.GetIndex((*data).PrimaryQ[0], data)].UpList)
-		//fmt.Println("Lengden til statuses: ", len(data.Statuses))
-		//fmt.Println("PrimaryQ: ", data.PrimaryQ)
-		//fmt.Println("Her er lengden til primaryQ",len(data.Statuses))
-		fmt.Println("Her er lastupdate fra main: ",data.Statuses[udp.GetIndex(udp.GetID(),data)].LastUpdate)
+		
 		if len(UpList) == 0 && len(DownList) == 0{
 			if handled == 0{
 				out<- data
 				data = <-in
-				//fmt.Println("control: 383. Er inne i costfunction")
+				
 			}else{
 				out<-data // Tømt UpList og DownList 
 				data = <-in // Venter
@@ -208,8 +204,7 @@ func CostFunction(in chan *udp.Data, out chan *udp.Data) {
 		}
 		for k := 0; k < len(data.PrimaryQ);k++ {
 			if udp.GetIndex(data.PrimaryQ[k],data) != -1 {
-				//fmt.Printf("PrimaryQ: %v Lengde Statuses: %v\n", data.PrimaryQ, len(data.Statuses))
-				//fmt.Println("Har den samme info om status.Uplist her: ", data.Statuses[k].UpList)
+	
 				DownList = append(DownList,data.Statuses[k].DownList...)
 				//data.Statuses[udp.GetIndex(data.PrimaryQ[k], data)].DownList = data.Statuses[udp.GetIndex(data.PrimaryQ[k], data)].DownList[:0]
 
@@ -362,8 +357,6 @@ func CostFunction(in chan *udp.Data, out chan *udp.Data) {
 	}
 
 for up:=0; up<len(UpList);up++ {
-		//fmt.Println("Up: ",up)
-		//fmt.Println(data.PrimaryQ)
 		if handled == 1{
 			handled = 0
 			up = 0	
