@@ -87,10 +87,10 @@ func GetID() int {
 
 /////////// Primary functions ////////////
 
-func PrimaryBroadcast(broadcastListen int, data *Data) { // IMALIVE, oppdatere backup for alle
+func PrimaryBroadcast(broadcastPort int, data *Data) { // IMALIVE, oppdatere backup for alle
 	var temp Data
 	
-	udpAddr, err := net.ResolveUDPAddr("udp", "129.241.187.255:" + strconv.Itoa(broadcastListen))
+	udpAddr, err := net.ResolveUDPAddr("udp", "129.241.187.255:" + strconv.Itoa(broadcastPort))
 	//checkError(err)
 	bconn, err := net.DialUDP("udp", nil, udpAddr)
 	checkError(err)
@@ -218,9 +218,9 @@ func CleanDeadSlaves(data Data){ // FIX
 */
 /////////// Slave functions //////////// 
 
-func ListenForPrimary(broadcastListen int,in chan *Data, out chan *Data, PrimaryChan chan int) { // Bruke chan muligens fordi den skal skrive til Data
+func ListenForPrimary(broadcastPort int,in chan *Data, out chan *Data, PrimaryChan chan int) { // Bruke chan muligens fordi den skal skrive til Data
 	buffer := make([]byte, 1024)
-	udpAddr, err := net.ResolveUDPAddr("udp", ":" + strconv.Itoa(broadcastListen))
+	udpAddr, err := net.ResolveUDPAddr("udp", ":" + strconv.Itoa(broadcastPort))
 	bconn, err := net.ListenUDP("udp", udpAddr)
 	checkError(err)
 	var data *Data
@@ -362,7 +362,7 @@ func UdpInit(localListenPort int, broadcastListen int, message_size int, data *D
 		data.Statuses[GetIndex(GetID(), data)].Primary = true
 		go ChannelFunc(PrimaryChan)
 		//go ChannelFunc(PrimaryChan)
-		go PrimaryBroadcast(broadcastListen,data)
+		//go PrimaryBroadcast(broadcastListen,data)
 		
 	} else {
 		err = json.Unmarshal(buffer[0:n], data)
