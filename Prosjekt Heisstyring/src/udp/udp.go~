@@ -328,7 +328,7 @@ func SlaveUpdate(in chan *Data, out chan *Data) { // chan muligens, bare oppdate
 		data = <-in
 		data.ID = GetID()
 		fmt.Println("Data.ID før sending",data.ID)
-		data.Statuses[udp.GetIndex(GetID(), data)].LastUpdate = time.Now()
+		data.Statuses[GetIndex(GetID(), data)].LastUpdate = time.Now()
 		//if len(data.Statuses[GetIndex(data.ID,data)].UpList)>0||len(data.Statuses[GetIndex(data.ID,data)].DownList)>0||init==0 {
 		b,_ := json.Marshal(*data)
 		//init = 1
