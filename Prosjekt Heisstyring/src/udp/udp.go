@@ -327,8 +327,12 @@ func SlaveUpdate(in chan *Data, out chan *Data) { // chan muligens, bare oppdate
 		 //WRITE
 		data = <-in
 		data.ID = GetID()
+		
 		fmt.Println("Data.ID før sending",data.ID)
 		data.Statuses[GetIndex(GetID(), data)].LastUpdate = time.Now()
+		if(driver.GetFloorSensorSignal()!=-1){	
+			data.Statuses[GetIndex(GetID(), data)].CurrentFloor = driver.GetFloorSensorSignal()
+		}
 		//if len(data.Statuses[GetIndex(data.ID,data)].UpList)>0||len(data.Statuses[GetIndex(data.ID,data)].DownList)>0||init==0 {
 		b,_ := json.Marshal(*data)
 		//init = 1
@@ -340,7 +344,7 @@ func SlaveUpdate(in chan *Data, out chan *Data) { // chan muligens, bare oppdate
 		
 		conn.Write(b)	
 		checkError(err)
-		//time.Sleep(150*time.Millisecond) // bytte til bare ved endringar etterhvert
+		time.Sleep(150*time.Millisecond) // bytte til bare ved endringar etterhvert
 		if data.Statuses[GetIndex(GetID(), data)].Primary == true {
 			break
 		//}
