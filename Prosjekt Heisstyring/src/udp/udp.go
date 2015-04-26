@@ -36,7 +36,7 @@ type Status struct {
 type Data struct {
 	//Status Status
 	//Timestamp???????
-	ButtonList []int // [up0,up1,up2,dwn1,dwn2,dwn3]... [up/down + floor]
+	ButtonList []int // [up0,up1,up2,dwn1,dwn2,dwn3]
 	PriBroad bool
 	ID int
 	Statuses []Status // Oppdatere den her å i UdpInit()
