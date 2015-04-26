@@ -175,6 +175,7 @@ func PrimaryListen(in chan *Data, out chan *Data) {
 				err = json.Unmarshal(buffer[0:n], &receivedData)
 				checkError(err)
 				if functions.CheckList(tempData.PrimaryQ,receivedData.ID)==false {
+					fmt.Printf("Går inn i Checklisttingeling: %v, ID: %d" receivedData.PrimaryQ, receivedData.ID)
 					tempData.Statuses = append(tempData.Statuses, receivedData.Statuses[GetIndex(receivedData.ID, &receivedData)])
 					tempData.PrimaryQ = append(tempData.PrimaryQ, receivedData.ID) //PrimaryQ[1:]...)
 					tempData.ID = receivedData.ID
@@ -186,7 +187,7 @@ func PrimaryListen(in chan *Data, out chan *Data) {
 			}
 			tempData.Statuses[0].LastUpdate = time.Now()
 			
-			fmt.Println("PrimaryQ: ", tempData.PrimaryQ)
+			//fmt.Println("PrimaryQ: ", tempData.PrimaryQ)
 		
 				/*fmt.Println("Delay: ", functions.Delay(tempData.Statuses[GetIndex(tempData.ID, &tempData)].LastUpdate,time.Now()))
 				if(functions.Delay(time.Now(),tempData.Statuses[GetIndex(tempData.ID, &tempData)].LastUpdate)>5){
@@ -316,7 +317,7 @@ func SlaveAlive(data *Data) {
 func SlaveUpdate(in chan *Data, out chan *Data) { // chan muligens, bare oppdatere når det er endringar
 	data := <-in
 	out<- data
-	init := 0
+	//init := 0
 	udpAddr, err := net.ResolveUDPAddr("udp", "129.241.187.255:39999")
 	conn, err := net.DialUDP("udp",nil, udpAddr)
 	checkError(err)
@@ -328,7 +329,7 @@ func SlaveUpdate(in chan *Data, out chan *Data) { // chan muligens, bare oppdate
 		
 		//if len(data.Statuses[GetIndex(data.ID,data)].UpList)>0||len(data.Statuses[GetIndex(data.ID,data)].DownList)>0||init==0 {
 		b,_ := json.Marshal(*data)
-		init = 1
+		//init = 1
 		fmt.Println("Sender denne UpList: ", data.Statuses[GetIndex(data.ID,data)].UpList)
 		fmt.Println("Sender denne DownList: ", data.Statuses[GetIndex(data.ID,data)].DownList)
 		// Må endre detta til å bare slette når confirmation på ordre kommer, confirmation kan vere samma som lampe lista??
