@@ -163,9 +163,9 @@ func PrimaryListen(in chan *Data, out chan *Data) {
 			out <- data
 		default:
 			//fmt.Println("HØRER")
-			//if len(tempData.PrimaryQ) == 1{
-			//	conn.SetReadDeadline(time.Now().Add(500*time.Millisecond))
-			//}
+			if len(tempData.PrimaryQ) == 1{
+				conn.SetReadDeadline(time.Now().Add(500*time.Millisecond))
+			}
 			n, err := conn.Read(buffer) // Høtt skjer om den stoppar her?
 			//out<- data
 			if err == nil{
@@ -184,11 +184,13 @@ func PrimaryListen(in chan *Data, out chan *Data) {
 					tempData.ID = receivedData.ID
 					SendOrderlist(&tempData,1)
 				}else{
-			
+					
 					fmt.Println("Recieved time: ", receivedData.Statuses[GetIndex(GetID(), &receivedData)].LastUpdate)
 					tempData.ID = receivedData.ID
 					tempData.Statuses[GetIndex(tempData.ID,&tempData)] = tempData.Statuses[GetIndex(tempData.ID, &tempData)]
+					tempData.Statuses[GetIndex(tempData.ID, &tempData)].LastUpdate = time.Now() 
 				}
+				
 			}
 			tempData.Statuses[0].LastUpdate = time.Now()
 			
