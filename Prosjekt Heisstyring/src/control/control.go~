@@ -187,7 +187,7 @@ func CostFunction(in chan *udp.Data, out chan *udp.Data) {
 	for {
 		
 		handled = 0
-		
+		time.Sleep(150*time.Millisecond)
 		if len(UpList) == 0 && len(DownList) == 0{
 			if handled == 0{
 				out<- data

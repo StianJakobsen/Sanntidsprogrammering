@@ -163,9 +163,9 @@ func PrimaryListen(in chan *Data, out chan *Data) {
 			out <- data
 		default:
 			//fmt.Println("HØRER")
-			if len(tempData.PrimaryQ) == 1{
-				conn.SetReadDeadline(time.Now().Add(500*time.Millisecond))
-			}
+			//if len(tempData.PrimaryQ) == 1{
+			//	conn.SetReadDeadline(time.Now().Add(500*time.Millisecond))
+			//}
 			n, err := conn.Read(buffer) // Høtt skjer om den stoppar her?
 			//out<- data
 			if err == nil{
@@ -195,7 +195,7 @@ func PrimaryListen(in chan *Data, out chan *Data) {
 			}
 			
 			
-			/*fmt.Println("PrimaryQ: ", tempData.PrimaryQ)
+			fmt.Println("PrimaryQ: ", tempData.PrimaryQ)
 		
 				fmt.Println("Delay: ", functions.Delay(tempData.Statuses[GetIndex(tempData.ID, &tempData)].LastUpdate,time.Now()))
 				if(functions.Delay(time.Now(),tempData.Statuses[GetIndex(tempData.ID, &tempData)].LastUpdate)>5){
@@ -212,7 +212,7 @@ func PrimaryListen(in chan *Data, out chan *Data) {
 					tempData.Statuses = UpdateStatusList(tempData.Statuses,GetIndex(tempData.ID,&tempData))
 					tempData.PrimaryQ = functions.UpdateList(tempData.PrimaryQ,GetIndex(tempData.ID,&tempData))
 					SendOrderlist(&tempData,1)
-				}*/
+				}
 			
 			
 
@@ -335,7 +335,7 @@ func SlaveAlive(data *Data) {
 	}
 }
 */
-func SlaveUpdate(in chan *Data, out chan *Data) { // chan muligens, bare oppdatere når det er endringar
+func SlaveUpdate(in chan *Data, out chan *Data, timeChan chan time.Time) { // chan muligens, bare oppdatere når det er endringar
 	data := <-in
 	out<- data
 	//init := 0
@@ -347,7 +347,7 @@ func SlaveUpdate(in chan *Data, out chan *Data) { // chan muligens, bare oppdate
 		 //WRITE
 		data = <-in
 		data.ID = GetID()
-		
+		data.Statuses[GetIndex(data.ID,data)].LastUpdate = <-timeChan
 		fmt.Println("Data.ID før sending",data.ID)
 		
 		if(driver.GetFloorSensorSignal()!=-1){	
@@ -374,7 +374,7 @@ func SlaveUpdate(in chan *Data, out chan *Data) { // chan muligens, bare oppdate
 }
 
 // send_ch, receive_ch chan Udp_message
-func UdpInit(localListenPort int, broadcastListenPort int, message_size int, data *Data, slaveListenIn chan *Data, slaveListenOut chan *Data, PrimaryChan chan int, SlaveChan chan int, ) (err error) {
+func UdpInit(localListenPort int, broadcastListenPort int, message_size int, data *Data, slaveListenIn chan *Data, slaveListenOut chan *Data, PrimaryChan chan int, SlaveChan chan int) (err error) {
 	
 	buffer := make([]byte, message_size)
 	var status Status
